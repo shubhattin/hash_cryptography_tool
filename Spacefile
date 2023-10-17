@@ -1,0 +1,10 @@
+v: 0
+app_name: 'hashtool'
+icon: ./Icon.png
+micros:
+  - name: python-app
+    src: ./src
+    engine: python3.9
+    primary: true
+    public: true
+    run: uvicorn main:app

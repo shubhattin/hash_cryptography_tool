@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+import shubhlipi as sh
+
+
+def code_format(file: str = "."):
+    sh.cmd(f"black {file}", display=False)
+
+
+for x in sh.argv:
+    if x == "deploy":
+        sh.cmd(
+            "pipenv requirements --exclude-markers > requirements.txt", display=False
+        )
+        fl = sh.read("./requirements.txt")
+        fl = fl.replace("-i https://pypi.org/simple\n", "")
+        code_format()
+        sh.write("./src/requirements.txt", fl)
+        sh.delete_file("./requirements.txt")
+        sh.cmd("space push", direct=False)
+    elif x == "format":
+        code_format()

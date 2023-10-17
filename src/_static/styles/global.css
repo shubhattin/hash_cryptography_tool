@@ -1,0 +1,11 @@
+body {
+  padding: 5px;
+}
+.copy_btn::after {
+  content: "📋";
+  cursor: pointer;
+}
+.clear_btn::after {
+  content: "❌";
+  cursor: pointer;
+}

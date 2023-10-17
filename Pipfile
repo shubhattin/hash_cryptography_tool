@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+python-multipart = "*"
+brotli-asgi = "*"
+uvicorn = "*"
+brotli = "*"
+python-dotenv = "*"
+jinja2 = "*"
+cryptography = "*"
+
+[dev-packages]
+pyyaml = "*"
+python-dotenv = "*"
+black = "*"
+shubhlipi = "*"
+
+[requires]
+python_version = "3"
+# Prefer python >= 3.7

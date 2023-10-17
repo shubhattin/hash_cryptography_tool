@@ -1,0 +1,34 @@
+<form hx-post="/hash" hx-target="#hash_out">
+  <div class="grid">
+    <div class="grid">
+      <label>
+        <input type="radio" name="number" value="256" checked />
+        256
+      </label>
+      <label>
+        <input type="radio" name="number" value="512" />
+        512
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        <input type="radio" name="name" checked value="SHA3" />
+        SHA3
+      </label>
+      <label>
+        <input type="radio" name="name" value="SHA" />
+        SHA
+      </label>
+    </div>
+  </div>
+  <label>
+    Enter Text to Hash
+    <textarea name="text" required></textarea>
+  </label>
+  <input type="submit" value="Hash" />
+  <label>
+    Output <span class="clear_btn" clear-target="#hash_out"></span>
+    <span copy-target="#hash_out" class="copy_btn"></span>
+    <textarea readonly id="hash_out"></textarea>
+  </label>
+</form>
