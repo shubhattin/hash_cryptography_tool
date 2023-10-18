@@ -1,0 +1,19 @@
+<form
+  hx-post="/bcrypt_hash_verify"
+  hx-target="#bcrypt_hash_verify_out"
+  hx-swap="innerHTML"
+>
+  <label>
+    Enter Text
+    <textarea name="text" required></textarea>
+  </label>
+  <label>
+    Enter Hash
+    <textarea name="hash" required></textarea>
+  </label>
+  <button type="submit">Verify</button>
+  <div>
+    <strong>Output :-</strong>
+    <div id="bcrypt_hash_verify_out"></div>
+  </div>
+</form>

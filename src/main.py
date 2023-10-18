@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, Request
 from fastapi.responses import Response
-from kry.plugins import sthaitik_sanchit
+from fastapi.staticfiles import StaticFiles
 from brotli_asgi import BrotliMiddleware
 from datetime import timedelta
 from kry.datt import DEV_ENV
@@ -43,7 +43,7 @@ async def middleware(req: Request, call_next):
 
 app.include_router(app_router)
 
-app.mount("/", sthaitik_sanchit(directory="_static"), name="static")
+app.mount("/", StaticFiles(directory="_static"), name="static")
 
 if DEV_ENV:
     import uvicorn

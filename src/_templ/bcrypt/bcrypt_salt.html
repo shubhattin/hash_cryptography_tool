@@ -1,0 +1,16 @@
+<small>Bcrypt Salt is 29 character long random value</small>
+<a
+  href="#"
+  hx-post="/bcrypt_salt"
+  hx-target="#bcrypt_salt_out"
+  role="button"
+  onclick="event.preventDefault()"
+  hx-trigger="click delay:200ms"
+  hx-swap="innerHTML"
+  >Generate Salt</a
+>
+<label>
+  Generated Bcrypt Salt <span class="clear_btn" clear-target="#bcrypt_salt_out"></span>
+  <span class="copy_btn" copy-target="#bcrypt_salt_out"></span>
+  <textarea id="bcrypt_salt_out" rows="1" readonly></textarea>
+</label>

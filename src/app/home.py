@@ -1,5 +1,5 @@
 """
-Page :- /
+Page :- /, /bcrypt
 """
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import PlainTextResponse
@@ -16,6 +16,9 @@ from kry.gupta import (
     decrypt_text,
     to_base64,
     from_base64,
+    bcrypt_salt,
+    bcrypt_verify,
+    bcrypt_hash,
 )
 
 router = APIRouter(prefix="", default_response_class=PlainTextResponse)
@@ -26,8 +29,38 @@ async def home_page(req: Request):
     return render_page("home", req)
 
 
+@router.get("/bcrypt")
+async def bcrypt_page(req: Request):
+    return render_page("bcrypt", req)
+
+
+def get_html_msg(val: str, success: bool):
+    invalid = not success
+    return f"""<input readonly aria-invalid="{'true' if invalid else 'false'}" type="text" value="{val}"/>"""
+
+
+@router.post("/bcrypt_hash")
+async def bcrypt_hash_route(text: Annotated[str, Form()]):
+    return bcrypt_hash(text)
+
+
+@router.post("/bcrypt_salt")
+async def bcrypt_salt_route():
+    return bcrypt_salt()
+
+
+@router.post("/bcrypt_hash_verify")
+def bcrypt_hash_verify_route(
+    text: Annotated[str, Form()], hash: Annotated[str, Form()]
+):
+    if len(hash) != 60:
+        return get_html_msg("Insufficient Hash Length", False)
+    verified = bcrypt_verify(text, hash)
+    return get_html_msg("Valid Hash" if verified else "InValid Hash", verified)
+
+
 @router.post("/hash")
-async def hash(
+async def hash_route(
     name: Annotated[Literal["SHA", "SHA3"], Form()],
     number: Annotated[Literal["256", "512"], Form()],
     text: Annotated[str, Form()],
@@ -45,7 +78,7 @@ async def hash(
 
 
 @router.post("/pass_hash")
-async def pass_hash(
+async def pass_hash_route(
     name: Annotated[Literal["SHA", "SHA3"], Form()],
     number: Annotated[Literal["256", "512"], Form()],
     text: Annotated[str, Form()],
@@ -63,13 +96,8 @@ async def pass_hash(
             return sha_512(text + slt) + slt
 
 
-def get_html_msg(val: str, success: bool):
-    invalid = not success
-    return f"""<input readonly aria-invalid="{'true' if invalid else 'false'}" type="text" value="{val}"/>"""
-
-
 @router.post("/pass_hash_verify")
-async def pass_hash_verify(
+async def pass_hash_verify_route(
     name: Annotated[Literal["SHA", "SHA3"], Form()],
     number: Annotated[Literal["256", "512"], Form()],
     text: Annotated[str, Form()],
@@ -98,7 +126,7 @@ async def pass_hash_verify(
 
 
 @router.post("/salt")
-def get_salt():
+def get_salt_route():
     return salt()
 
 
@@ -111,7 +139,7 @@ def get_formatted_html(val: str, error=False):
 
 # Encrpt/Descrypt
 @router.post("/encrypt_decrypt")
-def encrypt_decrypt(
+def encrypt_decrypt_route(
     option: Annotated[Literal["encrypt", "decrypt"], Form()],
     text: Annotated[str, Form()],
     key: Annotated[str, Form()],
@@ -126,7 +154,7 @@ def encrypt_decrypt(
 
 
 @router.post("/base64")
-def base64(
+def base64_route(
     option: Annotated[Literal["encode", "decode"], Form()], text: Annotated[str, Form()]
 ):
     if option == "encode":

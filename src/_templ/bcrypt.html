@@ -1,0 +1,19 @@
+{% extends "_base.html" %} {% block title %}Bcrypt{% endblock %} {% block head
+%}
+<meta name="robots" content="noindex" />
+{% endblock%} {% block body %}
+<h4>Bcrypt</h4>
+<details>
+  <summary><strong>Bcrypt Hash</strong></summary>
+  {% include "bcrypt/bcrypt_hash.html" %}
+</details>
+<details>
+  <summary><strong>Bcrypt Hash Verifier</strong></summary>
+  {% include "bcrypt/bcrypt_hash_verify.html" %}
+</details>
+<details>
+  <summary><strong>Bcrypt Salt</strong></summary>
+  {% include "bcrypt/bcrypt_salt.html" %}
+</details>
+<script src="/scripts/copy_clear.js"></script>
+{% endblock %}

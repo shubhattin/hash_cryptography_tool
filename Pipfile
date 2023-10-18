@@ -12,6 +12,7 @@ brotli = "*"
 python-dotenv = "*"
 jinja2 = "*"
 cryptography = "*"
+bcrypt = "*"
 
 [dev-packages]
 pyyaml = "*"

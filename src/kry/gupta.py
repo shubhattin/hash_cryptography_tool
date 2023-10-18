@@ -1,5 +1,6 @@
 import hashlib, uuid, hashlib, base64
 from cryptography.fernet import Fernet
+import bcrypt
 
 
 def get_type(fg):
@@ -43,6 +44,18 @@ def sha_512(val) -> str:
 
 def md5(val) -> str:
     return hashlib.md5(bin_str(val)).hexdigest()
+
+
+def bcrypt_verify(val, hash):
+    return bcrypt.checkpw(bin_str(val), bin_str(hash))
+
+
+def bcrypt_hash(val):
+    return bcrypt.hashpw(bin_str(val), bcrypt.gensalt()).decode("utf-8")
+
+
+def bcrypt_salt():
+    return bcrypt.gensalt().decode("utf-8")
 
 
 # Encrypt/Decrypt

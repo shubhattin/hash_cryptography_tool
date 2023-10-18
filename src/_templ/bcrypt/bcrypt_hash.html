@@ -1,0 +1,13 @@
+<form hx-post="/bcrypt_hash" hx-target="#bcrypt_hash_out" hx-swap="innerHTML">
+  <label>
+    Enter Text to Hash
+    <textarea name="text" required></textarea>
+  </label>
+  <button type="submit">Sumbit</button>
+  <label>
+    Hashed Bcrypt Text
+    <span clear-target="#bcrypt_hash_out" class="clear_btn"></span>
+    <span copy-target="#bcrypt_hash_out" class="copy_btn"></span>
+    <textarea readonly id="bcrypt_hash_out"></textarea>
+  </label>
+</form>
