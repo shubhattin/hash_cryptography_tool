@@ -1,6 +1,5 @@
 <small>
-  This hashes the text by adding a 32 char long salt and also appends the salt
-  to hashed output
+  Hashes by adding salt to text and then also appends salt into the hashed text.
 </small>
 <form hx-post="/pass_hash" hx-target="#pass_hash_out" hx-swap="innerHTML">
   <div class="grid">
@@ -26,8 +25,7 @@
     </div>
   </div>
   <small style="margin-top: 2px">
-    Hash of type 256 is of length 64 and of type 512 is of length 128. SHA3 is a
-    imporved version of SHA algorithm.
+    Hash of type 256 is of length 64 and of type 512 is of length 128.
   </small>
   <label>
     Enter Text to Hash
