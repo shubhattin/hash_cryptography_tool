@@ -1,7 +1,12 @@
 {% extends "_base.html" %} {% block title %}Simple Cryptography Tool{% endblock
-%} {% block body %}
+%} {% block head %}
+<meta
+  name="description"
+  content="A Simple Cryptography Tool for Hashing SHA-256, SHA-512, SHA3-256 and SHA3-512, Encrypt/Decrypt Text, Base64 Encode/Decode, Salt, Password Hashing."
+/>
+{% endblock%} {% block body %}
 <h3>Simple Cryptography Tool</h3>
-<details open>
+<details>
   <summary><strong>Hash</strong></summary>
   {% include "home/hash.html" %}
 </details>
@@ -20,6 +25,10 @@
 <details>
   <summary><strong>Password Hash</strong></summary>
   {% include "home/pass_hash.html" %}
+</details>
+<details>
+  <summary><strong>Password Hash Verifier</strong></summary>
+  {% include "home/pass_hash_verify.html" %}
 </details>
 <script src="/scripts/copy_clear.js"></script>
 {% endblock %}

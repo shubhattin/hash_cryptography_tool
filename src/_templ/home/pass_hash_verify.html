@@ -1,4 +1,4 @@
-<form hx-post="/hash" hx-target="#hash_out" hx-swap="innerHTML">
+<form hx-post="/pass_hash_verify" hx-target="#pass_hash_verify_out" hx-swap="innerHTML">
   <div class="grid">
     <div class="grid">
       <label>
@@ -21,18 +21,17 @@
       </label>
     </div>
   </div>
-  <small style="margin-top: 2px">
-    Hash of type 256 is of length 64 and of type 512 is of length 128. SHA3 is a
-    imporved version of SHA algorithm.
-  </small>
   <label>
-    Enter Text to Hash
+    Enter Text
     <textarea name="text" required></textarea>
   </label>
-  <button type="submit">Sumbit</button>
   <label>
-    Hashed Text <span clear-target="#hash_out" class="clear_btn"></span>
-    <span copy-target="#hash_out" class="copy_btn"></span>
-    <textarea readonly id="hash_out"></textarea>
+    Enter Hash
+    <textarea name="hash" required></textarea>
   </label>
+  <button type="submit">Verify</button>
+  <div>
+    Output
+    <div id="pass_hash_verify_out"></div>
+  </div>
 </form>

@@ -1,4 +1,5 @@
 import hashlib, uuid, hashlib, base64
+from cryptography.fernet import Fernet
 
 
 def get_type(fg):
@@ -42,3 +43,18 @@ def sha_512(val) -> str:
 
 def md5(val) -> str:
     return hashlib.md5(bin_str(val)).hexdigest()
+
+
+# Encrypt/Decrypt
+
+
+def encrypt_text(val, key: str):
+    key = to_base64(md5(key))
+    fernet = Fernet(key)
+    return fernet.encrypt(bin_str(val)).decode("utf-8")
+
+
+def decrypt_text(val, key: str):
+    key = to_base64(md5(key))
+    fernet = Fernet(key)
+    return fernet.decrypt(bin_str(val)).decode("utf-8")

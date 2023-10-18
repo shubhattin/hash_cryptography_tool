@@ -1,0 +1,43 @@
+<small>
+  This hashes the text by adding a 32 char long salt and also appends the salt
+  to hashed output
+</small>
+<form hx-post="/pass_hash" hx-target="#pass_hash_out" hx-swap="innerHTML">
+  <div class="grid">
+    <div class="grid">
+      <label>
+        <input type="radio" name="number" value="256" checked />
+        256
+      </label>
+      <label>
+        <input type="radio" name="number" value="512" />
+        512
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        <input type="radio" name="name" checked value="SHA3" />
+        SHA3
+      </label>
+      <label>
+        <input type="radio" name="name" value="SHA" />
+        SHA
+      </label>
+    </div>
+  </div>
+  <small style="margin-top: 2px">
+    Hash of type 256 is of length 64 and of type 512 is of length 128. SHA3 is a
+    imporved version of SHA algorithm.
+  </small>
+  <label>
+    Enter Text to Hash
+    <textarea name="text" required></textarea>
+  </label>
+  <button type="submit">Sumbit</button>
+  <label>
+    Hashed Text + Salt
+    <span clear-target="#pass_hash_out" class="clear_btn"></span>
+    <span copy-target="#pass_hash_out" class="copy_btn"></span>
+    <textarea readonly id="pass_hash_out"></textarea>
+  </label>
+</form>

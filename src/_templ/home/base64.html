@@ -1,0 +1,29 @@
+<form
+  hx-post="/base64"
+  hx-target="#base64_out"
+  hx-swap="innerHTML"
+>
+  <div class="grid">
+    <label>
+      <input type="radio" name="option" value="encode" checked />
+      Encode
+    </label>
+    <label>
+      <input type="radio" name="option" value="decode" />
+      Deocde
+    </label>
+  </div>
+  <label>
+    Enter Text
+    <textarea name="text" required></textarea>
+  </label>
+  <button type="submit">Sumbit</button>
+  <label>
+    Output Text
+    <span clear-target="#base64_out>textarea" class="clear_btn"></span>
+    <span copy-target="#base64_out>textarea" class="copy_btn"></span>
+    <div id="base64_out">
+      <textarea readonly></textarea>
+    </div>
+  </label>
+</form>
