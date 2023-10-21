@@ -7,10 +7,12 @@
   onclick="event.preventDefault()"
   hx-trigger="click delay:200ms"
   hx-swap="innerHTML"
+  hx-indicator="#salt_spinner"
   >Generate Salt</a
 >
 <label>
   Generated Salt <span class="clear_btn" clear-target="#salt_out"></span>
   <span class="copy_btn" copy-target="#salt_out"></span>
+  <span class="spinner htmx-indicator" id="salt_spinner"></span>
   <textarea id="salt_out" rows="1" readonly></textarea>
 </label>

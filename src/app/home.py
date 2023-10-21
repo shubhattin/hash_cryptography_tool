@@ -1,5 +1,5 @@
 """
-Page :- /, /bcrypt
+Page :- /
 """
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import PlainTextResponse
@@ -15,10 +15,7 @@ from kry.gupta import (
     encrypt_text,
     decrypt_text,
     to_base64,
-    from_base64,
-    bcrypt_salt,
-    bcrypt_verify,
-    bcrypt_hash,
+    from_base64
 )
 
 router = APIRouter(prefix="", default_response_class=PlainTextResponse)
@@ -29,34 +26,9 @@ async def home_page(req: Request):
     return render_page("home", req)
 
 
-@router.get("/bcrypt")
-async def bcrypt_page(req: Request):
-    return render_page("bcrypt", req)
-
-
 def get_html_msg(val: str, success: bool):
     invalid = not success
     return f"""<input readonly aria-invalid="{'true' if invalid else 'false'}" type="text" value="{val}"/>"""
-
-
-@router.post("/bcrypt_hash")
-async def bcrypt_hash_route(text: Annotated[str, Form()]):
-    return bcrypt_hash(text)
-
-
-@router.post("/bcrypt_salt")
-async def bcrypt_salt_route():
-    return bcrypt_salt()
-
-
-@router.post("/bcrypt_hash_verify")
-def bcrypt_hash_verify_route(
-    text: Annotated[str, Form()], hash: Annotated[str, Form()]
-):
-    if len(hash) != 60:
-        return get_html_msg("Insufficient Hash Length", False)
-    verified = bcrypt_verify(text, hash)
-    return get_html_msg("Valid Hash" if verified else "InValid Hash", verified)
 
 
 @router.post("/hash")
@@ -122,7 +94,7 @@ async def pass_hash_verify_route(
             verified = sha_256(text + slt) == hsh
         elif number == "512":
             verified = sha_512(text + slt) == hsh
-    return get_html_msg("Valid Hash" if verified else "InValid Hash", verified)
+    return get_html_msg("Valid Hash" if verified else "Invalid Hash", verified)
 
 
 @router.post("/salt")

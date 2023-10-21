@@ -1,4 +1,9 @@
-<form hx-post="/bcrypt_hash" hx-target="#bcrypt_hash_out" hx-swap="innerHTML">
+<form
+  hx-post="/bcrypt_hash"
+  hx-target="#bcrypt_hash_out"
+  hx-swap="innerHTML"
+  hx-indicator="#bcrypt_hash_spinner"
+>
   <label>
     Enter Text to Hash
     <textarea name="text" required></textarea>
@@ -8,6 +13,7 @@
     Hashed Bcrypt Text
     <span clear-target="#bcrypt_hash_out" class="clear_btn"></span>
     <span copy-target="#bcrypt_hash_out" class="copy_btn"></span>
+    <span class="spinner htmx-indicator" id="bcrypt_hash_spinner"></span>
     <textarea readonly id="bcrypt_hash_out"></textarea>
   </label>
 </form>

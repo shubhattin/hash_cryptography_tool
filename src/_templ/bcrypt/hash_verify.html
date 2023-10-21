@@ -2,6 +2,7 @@
   hx-post="/bcrypt_hash_verify"
   hx-target="#bcrypt_hash_verify_out"
   hx-swap="innerHTML"
+  hx-indicator="#bcrypt_hash_verify_spinner"
 >
   <label>
     Enter Text
@@ -14,6 +15,7 @@
   <button type="submit">Verify</button>
   <div>
     <strong>Output :-</strong>
+    <span class="spinner htmx-indicator" id="bcrypt_hash_verify_spinner"></span>
     <div id="bcrypt_hash_verify_out"></div>
   </div>
 </form>

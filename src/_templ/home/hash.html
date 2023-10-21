@@ -1,4 +1,9 @@
-<form hx-post="/hash" hx-target="#hash_out" hx-swap="innerHTML">
+<form
+  hx-post="/hash"
+  hx-target="#hash_out"
+  hx-swap="innerHTML"
+  hx-indicator="#hash_spinner"
+>
   <div class="grid">
     <div class="grid">
       <label>
@@ -32,6 +37,7 @@
   <label>
     Hashed Text <span clear-target="#hash_out" class="clear_btn"></span>
     <span copy-target="#hash_out" class="copy_btn"></span>
+    <span class="spinner htmx-indicator" id="hash_spinner"></span>
     <textarea readonly id="hash_out"></textarea>
   </label>
 </form>
