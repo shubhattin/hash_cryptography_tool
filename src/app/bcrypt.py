@@ -5,7 +5,6 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import PlainTextResponse
 from kry.plugins import render_page
 from ._router import app_router
-from typing import Annotated
 from kry.gupta import (
     bcrypt_salt,
     bcrypt_verify,
@@ -26,7 +25,7 @@ def get_html_msg(val: str, success: bool):
 
 
 @router.post("/bcrypt_hash")
-async def bcrypt_hash_route(text: Annotated[str, Form()]):
+async def bcrypt_hash_route(text: str = Form()):
     return bcrypt_hash(text)
 
 
@@ -36,9 +35,7 @@ async def bcrypt_salt_route():
 
 
 @router.post("/bcrypt_hash_verify")
-def bcrypt_hash_verify_route(
-    text: Annotated[str, Form()], hash: Annotated[str, Form()]
-):
+def bcrypt_hash_verify_route(text: str = Form(), hash: str = Form()):
     if len(hash) != 60:
         return get_html_msg("Incorrect Hash Length", False)
     verified = bcrypt_verify(text, hash)

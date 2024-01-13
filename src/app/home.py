@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import PlainTextResponse
 from kry.plugins import render_page
 from ._router import app_router
-from typing import Annotated, Literal
+from typing import Literal
 from kry.gupta import (
     sha3_256,
     sha3_512,
@@ -15,7 +15,7 @@ from kry.gupta import (
     encrypt_text,
     decrypt_text,
     to_base64,
-    from_base64
+    from_base64,
 )
 
 router = APIRouter(prefix="", default_response_class=PlainTextResponse)
@@ -33,9 +33,9 @@ def get_html_msg(val: str, success: bool):
 
 @router.post("/hash")
 async def hash_route(
-    name: Annotated[Literal["SHA", "SHA3"], Form()],
-    number: Annotated[Literal["256", "512"], Form()],
-    text: Annotated[str, Form()],
+    name: Literal["SHA", "SHA3"] = Form(),
+    number: Literal["256", "512"] = Form(),
+    text: str = Form(),
 ):
     if name == "SHA3":
         if number == "256":
@@ -51,9 +51,9 @@ async def hash_route(
 
 @router.post("/pass_hash")
 async def pass_hash_route(
-    name: Annotated[Literal["SHA", "SHA3"], Form()],
-    number: Annotated[Literal["256", "512"], Form()],
-    text: Annotated[str, Form()],
+    name: Literal["SHA", "SHA3"] = Form(),
+    number: Literal["256", "512"] = Form(),
+    text: str = Form(),
 ):
     slt = salt()
     if name == "SHA3":
@@ -70,10 +70,10 @@ async def pass_hash_route(
 
 @router.post("/pass_hash_verify")
 async def pass_hash_verify_route(
-    name: Annotated[Literal["SHA", "SHA3"], Form()],
-    number: Annotated[Literal["256", "512"], Form()],
-    text: Annotated[str, Form()],
-    hash: Annotated[str, Form()],
+    name: Literal["SHA", "SHA3"] = Form(),
+    number: Literal["256", "512"] = Form(),
+    text: str = Form(),
+    hash: str = Form(),
 ):
     LENGTH = {"512": 128, "256": 64}
     hash_length = LENGTH[number]
@@ -112,9 +112,9 @@ def get_formatted_html(val: str, error=False):
 # Encrpt/Descrypt
 @router.post("/encrypt_decrypt")
 def encrypt_decrypt_route(
-    option: Annotated[Literal["encrypt", "decrypt"], Form()],
-    text: Annotated[str, Form()],
-    key: Annotated[str, Form()],
+    option: Literal["encrypt", "decrypt"] = Form(),
+    text: str = Form(),
+    key: str = Form(),
 ):
     if option == "encrypt":
         return get_formatted_html(encrypt_text(text, key))
@@ -126,9 +126,7 @@ def encrypt_decrypt_route(
 
 
 @router.post("/base64")
-def base64_route(
-    option: Annotated[Literal["encode", "decode"], Form()], text: Annotated[str, Form()]
-):
+def base64_route(option: Literal["encode", "decode"] = Form(), text: str = Form()):
     if option == "encode":
         return get_formatted_html(to_base64(text))
     elif option == "decode":
