@@ -19,6 +19,8 @@ pyyaml = "*"
 python-dotenv = "*"
 black = "*"
 shubhlipi = "*"
+typer = "*"
+rich = "*"
 
 [requires]
 python_version = "3"
