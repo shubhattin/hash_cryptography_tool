@@ -5,27 +5,30 @@ import typer
 
 app = typer.Typer()
 
-def code_format(file: str = "."):
-    sh.cmd(f"black {file}", display=False)
 
-@app.command()
-def deploy(build_deps = True):
-    """Build the Dependencies, format the code and then deploy to `deta` cloud"""
-    if build_deps:
-        sh.cmd(
-            "pipenv requirements --exclude-markers > requirements.txt", display=False
-        )
-        fl = sh.read("./requirements.txt")
-        fl = fl.replace("-i https://pypi.org/simple\n", "")
-    code_format()
+@app.command("build-deps")
+def build_dependecies():
+    """Build Dependencies"""
+    sh.cmd("pipenv requirements --exclude-markers > requirements.txt", display=False)
+    fl = sh.read("./requirements.txt")
+    fl = fl.replace("-i https://pypi.org/simple\n", "")
     sh.write("./src/requirements.txt", fl)
     sh.delete_file("./requirements.txt")
+
+
+@app.command()
+def deploy(build_deps=True):
+    """Build the Dependencies, then deploy to `deta` cloud"""
+    if build_deps:
+        build_dependecies()
     sh.cmd("space push", direct=False)
+
 
 @app.command("format")
 def code_format_command():
     """Format the code using black"""
-    code_format()
+    sh.cmd("black .", display=False)
+
 
 if __name__ == "__main__":
     app()
