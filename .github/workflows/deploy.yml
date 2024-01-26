@@ -10,8 +10,8 @@ permissions:
   pages: write
   id-token: write
 jobs:
-  build:
-    name: Build Dependencies
+  build_deploy:
+    name: Build Dependencies and deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository using git
@@ -24,14 +24,10 @@ jobs:
         run : |
           pip install pipenv typer shubhlipi
           ./kry build-deps
-
-  deploy:
-    needs: build
-    name: deploy to deta space
-    runs-on: ubuntu-latest
-    steps:
-    - name: Deploy
-      uses: lizheming/deta-action@master
-      with:
-        access_token: Q7maEmvQ_gQ7p9j7iat8yWqD9iVJVQyVabGQsa4as
-        id: d0zhiKbTg5kM
+      - name: Checkout your repository using git
+        uses: actions/checkout@v3
+      - name: Deploy
+        uses: lizheming/deta-action@master
+        with:
+          access_token: Q7maEmvQ_gQ7p9j7iat8yWqD9iVJVQyVabGQsa4as
+          id: d0zhiKbTg5kM
