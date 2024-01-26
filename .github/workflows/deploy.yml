@@ -33,5 +33,5 @@ jobs:
     - name: Deploy
       uses: lizheming/deta-action@master
       with:
-        access_token: ${{ secrets.space_access_token }}
-        id: ${{ secrets.space_id }}
+        access_token: ${{ secrets.SPACE_ACCESS_TOKEN }}
+        id: ${{ secrets.SPACE_ID }}
