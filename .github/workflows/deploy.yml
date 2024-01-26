@@ -22,7 +22,7 @@ jobs:
           python-version: 3.9
       - name: Generate requirements.txt
         run : |
-          pip install pipenv typer
+          pip install pipenv typer shubhlipi
           ./kry build-deps
 
   deploy:
