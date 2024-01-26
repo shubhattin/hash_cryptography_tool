@@ -30,5 +30,6 @@ jobs:
         uses: lizheming/deta-action@master
         with:
           access_token: ${{ secrets.SPACE_ACCESS_TOKEN }}
-          id: ${{ vars.SPACE_ID }}
+          id: ${{ secrets.SPACE_ID }}
           listed: false
+          release: false
