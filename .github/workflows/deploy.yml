@@ -24,11 +24,6 @@ jobs:
         run: |
           pip install pipenv typer shubhlipi
           ./kry build-deps
-  deploy:
-    name: deploy to deta space
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Deta Space Deployment Github Action
         uses: neobrains/space-deployment-github-action@v0.5
         with:
