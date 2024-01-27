@@ -10,8 +10,8 @@ permissions:
   pages: write
   id-token: write
 jobs:
-  build:
-    name: build dependencies
+  deploy:
+    name: deploy to deta space
     runs-on: ubuntu-latest
     steps:
       - name: git checkout
@@ -24,7 +24,7 @@ jobs:
         run: |
           pip install pipenv typer shubhlipi
           ./kry build-deps
-      - name: Deta Space Deployment Github Action
+      - name: deta space deployment
         uses: neobrains/space-deployment-github-action@v0.5
         with:
           access_token: ${{ secrets.SPACE_ACCESS_TOKEN }}
