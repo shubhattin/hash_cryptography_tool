@@ -2,33 +2,39 @@ name: deploy to deta space
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
-  
+
 permissions:
   contents: read
   pages: write
   id-token: write
 jobs:
-  build_deploy:
-    name: Build Dependencies and deploy
+  build:
+    name: build dependencies
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      - name: git checkout
         uses: actions/checkout@v3
       - name: Setup Python
         uses: actions/setup-python@v4.4.0
         with:
           python-version: 3.9
-      - name: Generate requirements.txt
-        run : |
+      - name: generate requirements.txt
+        run: |
           pip install pipenv typer shubhlipi
           ./kry build-deps
-      - name: Deploy
-        uses: lizheming/deta-action@master
+  deploy:
+    name: deploy to deta space
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deta Space Deployment Github Action
+        uses: neobrains/space-deployment-github-action@v0.5
         with:
           access_token: ${{ secrets.SPACE_ACCESS_TOKEN }}
-          id: ${{ vars.SPACE_ID }}
+          project_id: ${{ vars.SPACE_ID }}
           # define the above as repository 'secrests' and 'vars'
-          listed: false
-          release: false
+          space_push: true
+          space_release: false
+          list_on_discovery: false
