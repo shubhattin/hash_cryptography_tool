@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from brotli_asgi import BrotliMiddleware
 from datetime import timedelta
 from .kry.datt import DEV_ENV
-from app import app_router
+from .app import app_router
 
 APP_NAME = "Simple Rent Record Analyser"
 if DEV_ENV:

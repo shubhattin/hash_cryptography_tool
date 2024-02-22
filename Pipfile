@@ -23,5 +23,5 @@ typer = "*"
 rich = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3"
 # Prefer python >= 3.7
