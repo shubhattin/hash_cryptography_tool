@@ -4,5 +4,3 @@
 !.env.example
 *__pycache__
 
-.space
-src/requirements.txt
