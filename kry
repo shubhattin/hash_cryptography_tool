@@ -16,14 +16,6 @@ def build_dependecies():
     sh.delete_file("./requirements.txt")
 
 
-@app.command()
-def deploy(build_deps=True):
-    """Build the Dependencies, then deploy to `deta` cloud"""
-    if build_deps:
-        build_dependecies()
-    sh.cmd("space push", direct=False)
-
-
 @app.command("format")
 def code_format_command():
     """Format the code using black"""
