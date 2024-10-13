@@ -1,0 +1,40 @@
+<small> Hashes by adding salt to text and then also appends salt into the hashed text. </small>
+<form>
+  <div class="grid">
+    <div class="grid">
+      <label>
+        <input type="radio" name="number" value="256" checked />
+        256
+      </label>
+      <label>
+        <input type="radio" name="number" value="512" />
+        512
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        <input type="radio" name="name" value="SHA" checked />
+        SHA
+      </label>
+      <label>
+        <input type="radio" name="name" value="SHA3" />
+        SHA3
+      </label>
+    </div>
+  </div>
+  <small style="margin-top: 2px">
+    Hash of type 256 is of length 64 and of type 512 is of length 128.
+  </small>
+  <label>
+    Enter Text to Hash
+    <textarea name="text" required></textarea>
+  </label>
+  <button type="submit">Sumbit</button>
+  <label>
+    Hashed Text + Salt
+    <span class="clear_btn"></span>
+    <span class="copy_btn"></span>
+    <span class="spinner htmx-indicator" id="pass_hash_spinner"></span>
+    <textarea readonly id="pass_hash_out"></textarea>
+  </label>
+</form>

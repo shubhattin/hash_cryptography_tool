@@ -1,0 +1,38 @@
+<form>
+  <div class="grid">
+    <div class="grid">
+      <label>
+        <input type="radio" name="number" value="256" checked />
+        256
+      </label>
+      <label>
+        <input type="radio" name="number" value="512" />
+        512
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        <input type="radio" name="name" value="SHA" checked />
+        SHA
+      </label>
+      <label>
+        <input type="radio" name="name" value="SHA3" />
+        SHA3
+      </label>
+    </div>
+  </div>
+  <label>
+    Enter Text
+    <textarea name="text" required></textarea>
+  </label>
+  <label>
+    Enter Hash
+    <textarea name="hash" required></textarea>
+  </label>
+  <button type="submit">Verify</button>
+  <div>
+    <strong>Output :-</strong>
+    <span class="spinner htmx-indicator" id="pass_hash_verify_spinner"></span>
+    <div id="pass_hash_verify_out"></div>
+  </div>
+</form>
