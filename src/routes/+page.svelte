@@ -12,6 +12,7 @@
     name="description"
     content="A Simple Cryptography Tool for Hashing SHA-256, SHA-512, SHA3-256 and SHA3-512, Encrypt/Decrypt Text, Base64 Encode/Decode, Salt, Password Hashing."
   />
+  <title>Simple Cryptography Tool</title>
 </svelte:head>
 
 <h3>Simple Cryptography Tool</h3>
