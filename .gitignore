@@ -1,8 +1,10 @@
 .venv
 .env
+node_modules
 .env.*
 !.env.example
 *__pycache__
+.vinxi
+.output
 
-.space
 src/requirements.txt
