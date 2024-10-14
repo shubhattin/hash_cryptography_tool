@@ -1,5 +1,6 @@
 <script lang="ts">
   import { copy_text_to_clipboard } from '~/tools/kry';
+  import { sha256, sha512, sha3 } from 'hash-wasm';
 
   let hash_number = $state<'256' | '512'>('256');
   let hash_algorithm = $state<'SHA' | 'SHA3'>('SHA');
@@ -7,7 +8,6 @@
   let hash = $state<string>('');
 
   async function gen_hash() {
-    const { sha256, sha512, sha3 } = await import('hash-wasm');
     if (text === '') return;
     if (hash_algorithm === 'SHA') {
       if (hash_number === '256') {
