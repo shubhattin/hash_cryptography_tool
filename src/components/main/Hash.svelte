@@ -1,6 +1,5 @@
 <script lang="ts">
   import { copy_text_to_clipboard } from '~/tools/kry';
-  import { sha256, sha512, sha3 } from 'hash-wasm';
 
   let hash_number = $state<'256' | '512'>('256');
   let hash_algorithm = $state<'SHA' | 'SHA3'>('SHA');
@@ -8,6 +7,8 @@
   let hash = $state<string>('');
 
   async function gen_hash() {
+    const { sha256, sha512, sha3 } = await import('hash-wasm');
+    if (text === '') return;
     if (hash_algorithm === 'SHA') {
       if (hash_number === '256') {
         hash = await sha256(text);
@@ -28,21 +29,21 @@
   <div class="grid">
     <div class="grid">
       <label>
-        <input type="radio" name="number" bind:group={hash_number} value="256" checked />
+        <input type="radio" bind:group={hash_number} value="256" checked />
         256
       </label>
       <label>
-        <input type="radio" name="number" bind:group={hash_number} value="512" />
+        <input type="radio" bind:group={hash_number} value="512" />
         512
       </label>
     </div>
     <div class="grid">
       <label>
-        <input type="radio" name="name" bind:group={hash_algorithm} value="SHA" checked />
+        <input type="radio" bind:group={hash_algorithm} value="SHA" checked />
         SHA
       </label>
       <label>
-        <input type="radio" name="name" bind:group={hash_algorithm} value="SHA3" />
+        <input type="radio" bind:group={hash_algorithm} value="SHA3" />
         SHA3
       </label>
     </div>
@@ -52,9 +53,9 @@
   </small>
   <label>
     Enter Text to Hash
-    <textarea name="text" id="hash_input" required bind:value={text}></textarea>
+    <textarea required bind:value={text}></textarea>
   </label>
-  <button type="submit">Sumbit</button>
+  <button type="submit">Hash Text</button>
   <label>
     Hashed Text
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -63,6 +64,6 @@
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <span class="copy_btn" onclick={() => copy_text_to_clipboard(hash)}></span>
-    <textarea readonly id="hash_out" bind:value={hash}></textarea>
+    <textarea readonly bind:value={hash}></textarea>
   </label>
 </form>
