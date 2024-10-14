@@ -26,6 +26,7 @@
   "type": "module",
   "dependencies": {
     "@fontsource/roboto": "^5.1.0",
-    "@picocss/pico": "^2.0.6"
+    "@picocss/pico": "^2.0.6",
+    "hash-wasm": "^4.11.0"
   }
 }
