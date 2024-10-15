@@ -7,7 +7,8 @@
   let text = $state<string>('');
   let hash = $state<string>('');
 
-  async function gen_hash() {
+  async function gen_hash(e: Event) {
+    e.preventDefault();
     if (text === '') return;
     if (hash_algorithm === 'SHA') {
       if (hash_number === '256') {
@@ -29,7 +30,7 @@
   <div class="grid">
     <div class="grid">
       <label>
-        <input type="radio" bind:group={hash_number} value="256" checked />
+        <input type="radio" bind:group={hash_number} value="256" />
         256
       </label>
       <label>
@@ -39,7 +40,7 @@
     </div>
     <div class="grid">
       <label>
-        <input type="radio" bind:group={hash_algorithm} value="SHA" checked />
+        <input type="radio" bind:group={hash_algorithm} value="SHA" />
         SHA
       </label>
       <label>
