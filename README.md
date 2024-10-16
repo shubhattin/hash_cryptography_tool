@@ -11,4 +11,4 @@
 
 > This also supports UTF-8(Unicode character) for all operations
 
-> This was made using [FastAPI (Python)](https://fastapi.tiangolo.com/), [htmx](https://htmx.org/) and [PicoCSS](https://picocss.com/) till [this commit](https://github.com/shubhattin/hash_cryptography_tool/tree/694834ecd6fd9f0a283d8f4992a6e57b345953da)
+This was made using [FastAPI (Python)](https://fastapi.tiangolo.com/), [htmx](https://htmx.org/) and [PicoCSS](https://picocss.com/) till [this commit](https://github.com/shubhattin/hash_cryptography_tool/tree/694834ecd6fd9f0a283d8f4992a6e57b345953da)
