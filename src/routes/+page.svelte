@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-  <title>Bcrypt</title>
+  <title>Hash Cryptography Tool</title>
 </svelte:head>
 
 <h3>Simple Cryptography Tool</h3>

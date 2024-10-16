@@ -4,7 +4,7 @@
 
   let text = $state<string>('');
   let hash = $state<string>('');
-  let cost_factor = $state<number>(11);
+  let work_factor = $state<number>(11);
 
   let hashing_status = $state<boolean>(false);
 
@@ -17,7 +17,7 @@
       hash = await bcrypt({
         password: text,
         salt: salt,
-        costFactor: cost_factor,
+        costFactor: work_factor,
         outputType: 'encoded'
       });
       hashing_status = false;
@@ -31,8 +31,8 @@
     <textarea name="text" required bind:value={text}></textarea>
   </label>
   <label>
-    Cost Factor
-    <input type="number" min={6} max={20} bind:value={cost_factor} />
+    Work Factor : {work_factor}
+    <input type="range" min={6} max={20} bind:value={work_factor} />
   </label>
   <button type="submit">Hash Text</button>
   <label>
