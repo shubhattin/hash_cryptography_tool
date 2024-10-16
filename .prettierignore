@@ -1,0 +1,10 @@
+# package managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+node_modules
+.venv
+.svelte-kit
+build
+
+a

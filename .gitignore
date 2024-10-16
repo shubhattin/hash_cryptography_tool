@@ -1,8 +1,10 @@
 .venv
 .env
+node_modules
 .env.*
 !.env.example
 *__pycache__
+.svelte-kit
+build
 
-.space
-src/requirements.txt
+a
