@@ -8,11 +8,7 @@
 </script>
 
 <svelte:head>
-  <meta
-    name="description"
-    content="A Simple Cryptography Tool for Hashing SHA-256, SHA-512, SHA3-256 and SHA3-512, Encrypt/Decrypt Text, Base64 Encode/Decode, Salt, Password Hashing."
-  />
-  <title>Simple Cryptography Tool</title>
+  <title>Bcrypt</title>
 </svelte:head>
 
 <h3>Simple Cryptography Tool</h3>
@@ -40,3 +36,5 @@
   <summary><strong>Password Hash Verifier</strong></summary>
   <PasswordHashVerifier />
 </details>
+
+<a href="/bcrypt">Bcrypt</a>
