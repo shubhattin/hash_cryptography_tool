@@ -1,7 +1,7 @@
 <script lang="ts">
   import { copy_text_to_clipboard } from '~/tools/kry';
   import { sha256, sha512, sha3 } from 'hash-wasm';
-  import { gen_salt } from '~/tools/hash';
+  import { gen_salt } from '~/tools/hash_tools';
 
   let hash_number = $state<'256' | '512'>('256');
   let hash_algorithm = $state<'SHA' | 'SHA3'>('SHA');

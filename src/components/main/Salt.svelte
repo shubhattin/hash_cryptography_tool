@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { gen_salt } from '~/tools/hash';
+  import { gen_salt } from '~/tools/hash_tools';
   import { copy_text_to_clipboard } from '~/tools/kry';
 
   let salt = $state<string>('');
