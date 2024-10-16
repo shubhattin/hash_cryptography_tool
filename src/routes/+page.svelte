@@ -37,4 +37,4 @@
   <PasswordHashVerifier />
 </details>
 
-<a href="/bcrypt">Bcrypt</a>
+<a href="./bcrypt">Bcrypt</a>
