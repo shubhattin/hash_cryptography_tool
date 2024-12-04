@@ -12,21 +12,21 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.5",
-    "@sveltejs/kit": "^2.7.0",
+    "@sveltejs/adapter-static": "^3.0.6",
+    "@sveltejs/kit": "^2.9.0",
     "@sveltejs/vite-plugin-svelte": "4.0.0-next.8",
-    "@types/node": "^22.7.5",
-    "prettier": "^3.3.3",
-    "prettier-plugin-svelte": "^3.2.7",
+    "@types/node": "^22.10.1",
+    "prettier": "^3.4.1",
+    "prettier-plugin-svelte": "^3.3.2",
     "svelte": "5.0.0-next.264",
-    "svelte-check": "^4.0.5",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.8"
+    "svelte-check": "^4.1.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
   },
   "type": "module",
   "dependencies": {
     "@fontsource/roboto": "^5.1.0",
     "@picocss/pico": "^2.0.6",
-    "hash-wasm": "^4.11.0"
+    "hash-wasm": "^4.12.0"
   }
 }
