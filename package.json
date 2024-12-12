@@ -27,6 +27,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.1.0",
     "@picocss/pico": "^2.0.6",
+    "buffer": "^6.0.3",
     "hash-wasm": "^4.12.0"
   }
 }
