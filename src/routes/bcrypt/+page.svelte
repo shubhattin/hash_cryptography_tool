@@ -3,6 +3,8 @@
   import BcryptHashVerifier from '~/components/main/bcrypt/BcryptHashVerifier.svelte';
   import ArgonHash from '~/components/main/bcrypt/ArgonHash.svelte';
   import ArgonHashVerifier from '~/components/main/bcrypt/ArgonHashVerifier.svelte';
+  import ScryptHash from '~/components/main/bcrypt/ScryptHash.svelte';
+  import ScryptHashVerifier from '~/components/main/bcrypt/ScryptHashVerifier.svelte';
 </script>
 
 <svelte:head>
@@ -24,4 +26,12 @@
 <details>
   <summary><strong>Argon Hash Verifier</strong></summary>
   <ArgonHashVerifier />
+</details>
+<details>
+  <summary><strong>Scrypt Hash</strong></summary>
+  <ScryptHash />
+</details>
+<details>
+  <summary><strong>Scrypt Hash Verifier</strong></summary>
+  <ScryptHashVerifier />
 </details>
