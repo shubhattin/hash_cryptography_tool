@@ -62,7 +62,7 @@
     <label>
       Cost Factor
       <select bind:value={cost_factor}>
-        {#each Array.from({ length: 10 }) as _, i}
+        {#each Array.from({ length: 15 }) as _, i}
           {@const cost = Math.pow(2, i + 2)}
           <option value={cost}>{cost}</option>
         {/each}
