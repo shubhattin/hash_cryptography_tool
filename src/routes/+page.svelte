@@ -1,4 +1,5 @@
 <script>
+  import AlphaNumeric from '~/components/main/AlphaNumeric.svelte';
   import Base64 from '~/components/main/Base64.svelte';
   import EncryptDecrypt from '~/components/main/EncryptDecrypt.svelte';
   import Hash from '~/components/main/Hash.svelte';
@@ -27,6 +28,10 @@
 <details>
   <summary><strong>Salt</strong></summary>
   <Salt />
+</details>
+<details>
+  <summary><strong>Alphanumeric</strong></summary>
+  <AlphaNumeric />
 </details>
 <details>
   <summary><strong>Password Hash</strong></summary>
