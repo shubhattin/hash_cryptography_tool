@@ -3,8 +3,6 @@
   import Base64 from '~/components/main/Base64.svelte';
   import EncryptDecrypt from '~/components/main/EncryptDecrypt.svelte';
   import Hash from '~/components/main/Hash.svelte';
-  import PasswordHash from '~/components/main/PasswordHash.svelte';
-  import PasswordHashVerifier from '~/components/main/PasswordHashVerifier.svelte';
   import Salt from '~/components/main/Salt.svelte';
 </script>
 
@@ -33,13 +31,5 @@
   <summary><strong>Alphanumeric</strong></summary>
   <AlphaNumeric />
 </details>
-<details>
-  <summary><strong>Password Hash</strong></summary>
-  <PasswordHash />
-</details>
-<details>
-  <summary><strong>Password Hash Verifier</strong></summary>
-  <PasswordHashVerifier />
-</details>
 
-<a href="./bcrypt">Bcrypt</a>
+<a href="./pass_hash">Password Hash</a>
