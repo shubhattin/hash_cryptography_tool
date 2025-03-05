@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { copy_text_to_clipboard } from '~/tools/kry';
   import { scrypt } from 'hash-wasm';
+  import { verifyPassword } from '~/tools/better_auth_scrypt_hash';
 
   let text = $state<string>('');
   let hash = $state<string>('');
@@ -8,6 +8,7 @@
   let block_size = $state<number>(8);
   let parallelism = $state<number>(1);
   let hash_length = $state<number>(64);
+  let is_better_auth_hash = $state(false);
 
   let verified_status = $state<boolean | null>(null);
   let hashing_status = $state<boolean>(false);
@@ -29,17 +30,19 @@
       }
 
       const salt = hexToUint8Array(storedSaltHex);
-      const hash_out = await scrypt({
-        password: text,
-        salt,
-        costFactor: cost_factor,
-        blockSize: block_size,
-        parallelism: parallelism,
-        hashLength: hash_length,
-        outputType: 'hex'
-      });
-
-      verified_status = storedHashHex === hash_out;
+      if (!is_better_auth_hash) {
+        const hash_out = await scrypt({
+          password: text,
+          salt,
+          costFactor: cost_factor,
+          blockSize: block_size,
+          parallelism: parallelism,
+          hashLength: hash_length,
+          outputType: 'hex'
+        });
+        verified_status = storedHashHex === hash_out;
+      } else {
+      }
     } catch (error) {
       console.error('Verification error:', error);
       verified_status = false;
@@ -55,13 +58,17 @@
     <textarea name="text" required bind:value={text}></textarea>
   </label>
   <label>
-    Enter Hash (format: "salt:hash")
+    Enter Hash
     <textarea name="hash" required bind:value={hash}></textarea>
+  </label>
+  <label>
+    <input type="checkbox" bind:checked={is_better_auth_hash} />
+    Better Auth Hash
   </label>
   <fieldset class="grid">
     <label>
       Cost Factor
-      <select bind:value={cost_factor}>
+      <select bind:value={cost_factor} disabled={is_better_auth_hash}>
         {#each Array.from({ length: 15 }) as _, i}
           {@const cost = Math.pow(2, i + 2)}
           <option value={cost}>{cost}</option>
@@ -70,17 +77,35 @@
     </label>
     <label>
       Block Size
-      <input type="number" min={1} max={32} bind:value={block_size} />
+      <input
+        type="number"
+        disabled={is_better_auth_hash}
+        min={1}
+        max={32}
+        bind:value={block_size}
+      />
     </label>
   </fieldset>
   <fieldset class="grid">
     <label>
       Parallelism
-      <input type="number" min={1} max={16} bind:value={parallelism} />
+      <input
+        type="number"
+        disabled={is_better_auth_hash}
+        min={1}
+        max={16}
+        bind:value={parallelism}
+      />
     </label>
     <label>
       Hash Length
-      <input type="number" min={8} max={512} bind:value={hash_length} />
+      <input
+        type="number"
+        disabled={is_better_auth_hash}
+        min={8}
+        max={512}
+        bind:value={hash_length}
+      />
     </label>
   </fieldset>
   <button type="submit">Verify Hash</button>

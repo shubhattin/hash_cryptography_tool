@@ -25,7 +25,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@better-auth/utils": "^0.2.3",
     "@fontsource/roboto": "^5.1.0",
+    "@noble/hashes": "^1.7.1",
     "@picocss/pico": "^2.0.6",
     "buffer": "^6.0.3",
     "hash-wasm": "^4.12.0"
