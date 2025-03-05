@@ -42,6 +42,7 @@
         });
         verified_status = storedHashHex === hash_out;
       } else {
+        verified_status = await verifyPassword({ hash: hash, password: text });
       }
     } catch (error) {
       console.error('Verification error:', error);
