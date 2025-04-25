@@ -4,6 +4,7 @@
   import EncryptDecrypt from '~/components/main/EncryptDecrypt.svelte';
   import Hash from '~/components/main/Hash.svelte';
   import Salt from '~/components/main/Salt.svelte';
+  import UUID from '~/components/main/UUID.svelte';
 </script>
 
 <svelte:head>
@@ -26,6 +27,10 @@
 <details>
   <summary><strong>Salt</strong></summary>
   <Salt />
+</details>
+<details>
+  <summary><strong>UUID</strong></summary>
+  <UUID />
 </details>
 <details>
   <summary><strong>Alphanumeric</strong></summary>
