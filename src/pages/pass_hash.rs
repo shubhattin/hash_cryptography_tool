@@ -4,7 +4,7 @@ use crate::components::{
     layout::AppLayout,
     ui::{
         provide_mask_passwords, FieldLabel, MaskPasswordToggle, OutputField, PrimaryButton,
-        RadioGroup, StatusBadge, TextArea, TextInput, ToolSection,
+        RadioGroup, StatusBadge, TextArea, TextInput, ToolSection, FORM_CONTROL,
     },
 };
 use crate::utils::{
@@ -443,23 +443,17 @@ fn ScryptHashSection() -> impl IntoView {
                         "Better Auth: NFKC password, salt as hex string, N=16384 r=16 p=1 dkLen=64"
                     </p>
                 </Show>
-                <div class=move || {
-                    if params_disabled.get() {
-                        "grid gap-4 rounded-lg border border-dashed border-muted bg-muted/30 p-4 sm:grid-cols-2 transition-colors"
-                    } else {
-                        "grid gap-4 sm:grid-cols-2"
-                    }
-                }>
-                    <FieldLabel label="Cost factor (N)" disabled=params_disabled>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FieldLabel label="Cost factor (N)">
                         <ScryptCostSelect value=cost disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Block size (r)" disabled=params_disabled>
+                    <FieldLabel label="Block size (r)">
                         <NumberInput value=block min=1 max=32 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Parallelism (p)" disabled=params_disabled>
+                    <FieldLabel label="Parallelism (p)">
                         <NumberInput value=parallel min=1 max=16 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Hash length" disabled=params_disabled>
+                    <FieldLabel label="Hash length">
                         <NumberInput value=len min=8 max=512 disabled=params_disabled />
                     </FieldLabel>
                 </div>
@@ -534,23 +528,17 @@ fn ScryptVerifySection() -> impl IntoView {
                         "Better Auth: NFKC password, salt as hex string, N=16384 r=16 p=1 dkLen=64"
                     </p>
                 </Show>
-                <div class=move || {
-                    if params_disabled.get() {
-                        "grid gap-4 rounded-lg border border-dashed border-muted bg-muted/30 p-4 sm:grid-cols-2 transition-colors"
-                    } else {
-                        "grid gap-4 sm:grid-cols-2"
-                    }
-                }>
-                    <FieldLabel label="Cost factor (N)" disabled=params_disabled>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <FieldLabel label="Cost factor (N)">
                         <ScryptCostSelect value=cost disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Block size (r)" disabled=params_disabled>
+                    <FieldLabel label="Block size (r)">
                         <NumberInput value=block min=1 max=32 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Parallelism (p)" disabled=params_disabled>
+                    <FieldLabel label="Parallelism (p)">
                         <NumberInput value=parallel min=1 max=16 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Hash length" disabled=params_disabled>
+                    <FieldLabel label="Hash length">
                         <NumberInput value=len min=8 max=512 disabled=params_disabled />
                     </FieldLabel>
                 </div>
@@ -567,8 +555,6 @@ fn ScryptVerifySection() -> impl IntoView {
     }
 }
 
-const FORM_CONTROL_DISABLED: &str = "transition disabled:cursor-not-allowed disabled:border-muted disabled:bg-muted/50 disabled:text-muted-foreground disabled:opacity-70 disabled:shadow-none";
-
 #[component]
 fn NumberInput(
     value: RwSignal<u32>,
@@ -582,9 +568,7 @@ fn NumberInput(
             type="number"
             min=min
             max=max
-            class=format!(
-                "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm {FORM_CONTROL_DISABLED}"
-            )
+            class=FORM_CONTROL
             prop:value=move || value.get()
             prop:disabled=move || disabled.get()
             on:input=move |ev| {
@@ -605,9 +589,7 @@ fn ScryptCostSelect(
     let costs: Vec<u32> = (2..=16).map(|i| 2u32.pow(i)).collect();
     view! {
         <select
-            class=format!(
-                "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm {FORM_CONTROL_DISABLED}"
-            )
+            class=FORM_CONTROL
             prop:disabled=move || disabled.get()
             on:change=move |ev| {
                 if let Ok(n) = event_target_value(&ev).parse() {

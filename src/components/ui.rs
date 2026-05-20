@@ -1,5 +1,14 @@
 use leptos::prelude::*;
 
+/// shadcn-style control base shared by inputs, selects, and textareas.
+pub const FORM_CONTROL: &str = "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/40 disabled:text-muted-foreground disabled:shadow-none disabled:ring-0";
+
+/// shadcn-style field wrapper; dims when any nested control is `[disabled]`.
+pub const FORM_FIELD: &str = "group mb-4 block last:mb-0 has-[:disabled]:cursor-not-allowed";
+
+/// shadcn-style field label; follows disabled state of nested controls.
+pub const FORM_FIELD_LABEL: &str = "mb-1.5 block text-sm font-medium leading-none text-foreground group-has-[:disabled]:cursor-not-allowed group-has-[:disabled]:opacity-70";
+
 /// Page-level toggle: when true, maskable fields render as password / obscured text.
 #[derive(Clone, Copy)]
 pub struct MaskPasswords(pub RwSignal<bool>);
@@ -83,25 +92,11 @@ pub fn ToolSection(
 pub fn FieldLabel(
     label: &'static str,
     #[prop(optional)] hint: Option<&'static str>,
-    #[prop(optional, into)]
-    disabled: Option<Signal<bool>>,
     children: Children,
 ) -> impl IntoView {
     view! {
-        <label class=move || {
-            if disabled.as_ref().is_some_and(|s| s.get()) {
-                "mb-4 block last:mb-0 opacity-80"
-            } else {
-                "mb-4 block last:mb-0"
-            }
-        }>
-            <span class=move || {
-                if disabled.as_ref().is_some_and(|s| s.get()) {
-                    "mb-1.5 block text-sm font-medium text-muted-foreground"
-                } else {
-                    "mb-1.5 block text-sm font-medium text-foreground"
-                }
-            }>{label}</span>
+        <label class=FORM_FIELD>
+            <span class=FORM_FIELD_LABEL>{label}</span>
             {hint.map(|h| view! {
                 <span class="mb-2 block text-xs text-muted-foreground">{h}</span>
             })}
@@ -128,7 +123,7 @@ pub fn TextInput(
     view! {
         <input
             type=input_type
-            class="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30"
+            class=FORM_CONTROL
             placeholder=placeholder.unwrap_or_default()
             prop:value=move || value.get()
             on:input=move |ev| value.set(event_target_value(&ev))
@@ -156,7 +151,7 @@ pub fn TextArea(
     view! {
         <textarea
             class=move || format!(
-                "w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 font-mono text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30 disabled:opacity-80{}",
+                "flex min-h-[5rem] w-full resize-y rounded-md border border-border bg-background px-3 py-2.5 font-mono text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/40 disabled:text-muted-foreground disabled:shadow-none disabled:ring-0{}",
                 extra_class()
             )
             rows=rows
