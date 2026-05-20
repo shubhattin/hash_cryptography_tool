@@ -117,9 +117,7 @@ pub fn argon2_verify(password: &str, hash: &str) -> Result<bool, PassHashError> 
     let parsed = PasswordHash::new(hash).map_err(|_| PassHashError::InvalidFormat("argon2"))?;
     // Algorithm is inferred from the hash string.
     let argon2 = Argon2::default();
-    Ok(argon2
-        .verify_password(password.as_bytes(), &parsed)
-        .is_ok())
+    Ok(argon2.verify_password(password.as_bytes(), &parsed).is_ok())
 }
 
 /// Normal scrypt hash: `{salt_hex}:{hash_hex}` (not Better Auth format).
@@ -175,13 +173,8 @@ pub fn better_auth_scrypt_derive_hex(
 
     let pwd = better_auth_password_bytes(password);
     let mut output = vec![0u8; BETTER_AUTH_DK_LEN];
-    scrypt(
-        &pwd,
-        salt_hex.as_bytes(),
-        &params,
-        &mut output,
-    )
-    .map_err(|e| PassHashError::Scrypt(e.to_string()))?;
+    scrypt(&pwd, salt_hex.as_bytes(), &params, &mut output)
+        .map_err(|e| PassHashError::Scrypt(e.to_string()))?;
     Ok(bytes_to_hex(&output))
 }
 
@@ -200,7 +193,9 @@ pub fn better_auth_scrypt_verify(password: &str, stored: &str) -> Result<bool, P
         .split_once(':')
         .ok_or(PassHashError::InvalidFormat("better-auth scrypt salt:hash"))?;
     if salt_hex.is_empty() || expected_hex.is_empty() {
-        return Err(PassHashError::InvalidFormat("better-auth scrypt empty part"));
+        return Err(PassHashError::InvalidFormat(
+            "better-auth scrypt empty part",
+        ));
     }
     let computed = better_auth_scrypt_derive_hex(password, salt_hex)?;
     Ok(constant_time_eq_str(&computed, expected_hex))

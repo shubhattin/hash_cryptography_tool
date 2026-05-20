@@ -9,9 +9,7 @@ use crate::components::{
 };
 use crate::utils::{
     hash::{self, DigestAlgorithm},
-    pass_hash::{
-        self, ArgonVariant, ScryptConfig,
-    },
+    pass_hash::{self, ArgonVariant, ScryptConfig},
 };
 
 #[component]
@@ -125,8 +123,7 @@ fn SaltedShaVerifySection() -> impl IntoView {
         }
         let algo = digest_algo(family.get(), size.get());
         status.set(Some(
-            hash::verify_password_with_salt(&text.get(), &stored.get(), algo)
-                .unwrap_or(false),
+            hash::verify_password_with_salt(&text.get(), &stored.get(), algo).unwrap_or(false),
         ));
     };
 
@@ -560,8 +557,7 @@ fn NumberInput(
     value: RwSignal<u32>,
     min: u32,
     max: u32,
-    #[prop(into)]
-    disabled: Signal<bool>,
+    #[prop(into)] disabled: Signal<bool>,
 ) -> impl IntoView {
     view! {
         <input
@@ -581,11 +577,7 @@ fn NumberInput(
 }
 
 #[component]
-fn ScryptCostSelect(
-    value: RwSignal<u32>,
-    #[prop(into)]
-    disabled: Signal<bool>,
-) -> impl IntoView {
+fn ScryptCostSelect(value: RwSignal<u32>, #[prop(into)] disabled: Signal<bool>) -> impl IntoView {
     let costs: Vec<u32> = (2..=16).map(|i| 2u32.pow(i)).collect();
     view! {
         <select

@@ -16,18 +16,17 @@ async fn main() {
     let addr = leptos_options.site_addr;
 
     // SSG must render the full Shell (with HydrationScripts), not App alone.
-    let (routes, static_generator) =
-        generate_route_list_with_exclusions_and_ssg_and_context(
-            {
-                let leptos_options = leptos_options.clone();
-                move || {
-                    let options = leptos_options.clone();
-                    view! { <Shell options/> }
-                }
-            },
-            None,
-            || {},
-        );
+    let (routes, static_generator) = generate_route_list_with_exclusions_and_ssg_and_context(
+        {
+            let leptos_options = leptos_options.clone();
+            move || {
+                let options = leptos_options.clone();
+                view! { <Shell options/> }
+            }
+        },
+        None,
+        || {},
+    );
     static_generator.generate(&leptos_options).await;
 
     if std::env::args().any(|arg| arg == "--ssg-only") {
@@ -35,17 +34,13 @@ async fn main() {
     }
 
     let app = Router::new()
-        .leptos_routes(
-            &leptos_options,
-            routes,
-            {
-                let leptos_options = leptos_options.clone();
-                move || {
-                    let options = leptos_options.clone();
-                    view! { <Shell options/> }
-                }
-            },
-        )
+        .leptos_routes(&leptos_options, routes, {
+            let leptos_options = leptos_options.clone();
+            move || {
+                let options = leptos_options.clone();
+                view! { <Shell options/> }
+            }
+        })
         .fallback(file_and_error_handler(|options| view! { <Shell options/> }))
         .with_state(leptos_options);
 

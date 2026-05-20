@@ -72,7 +72,10 @@ mod tests {
         let id = generate_uuid_v4();
         assert_eq!(id.len(), 36);
         assert!(id.contains('-'));
-        assert_eq!(Uuid::parse_str(&id).unwrap().get_version(), Some(uuid::Version::Random));
+        assert_eq!(
+            Uuid::parse_str(&id).unwrap().get_version(),
+            Some(uuid::Version::Random)
+        );
     }
 
     #[test]

@@ -7,7 +7,9 @@ use crate::components::{
     },
 };
 use crate::utils::{
-    codec::{decode_base64, encode_base64, generate_alphanumeric, generate_uuid_v4, generate_uuid_v6},
+    codec::{
+        decode_base64, encode_base64, generate_alphanumeric, generate_uuid_v4, generate_uuid_v6,
+    },
     hash::{self, DigestAlgorithm},
 };
 

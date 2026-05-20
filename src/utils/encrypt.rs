@@ -53,9 +53,7 @@ pub fn encrypt_text(plaintext: &str, passphrase: &str) -> Result<String, Encrypt
 
 /// Decrypt a string produced by [`encrypt_text`].
 pub fn decrypt_text(payload: &str, passphrase: &str) -> Result<String, EncryptError> {
-    let (nonce_b64, ct_b64) = payload
-        .split_once('-')
-        .ok_or(EncryptError::InvalidFormat)?;
+    let (nonce_b64, ct_b64) = payload.split_once('-').ok_or(EncryptError::InvalidFormat)?;
 
     let nonce_bytes = B64
         .decode(nonce_b64)
@@ -64,9 +62,7 @@ pub fn decrypt_text(payload: &str, passphrase: &str) -> Result<String, EncryptEr
         return Err(EncryptError::InvalidFormat);
     }
 
-    let ciphertext = B64
-        .decode(ct_b64)
-        .map_err(|_| EncryptError::Base64Decode)?;
+    let ciphertext = B64.decode(ct_b64).map_err(|_| EncryptError::Base64Decode)?;
 
     let key = derive_aes256_key(passphrase);
     let cipher = Aes256Gcm::new_from_slice(&key).map_err(|_| EncryptError::DecryptFailed)?;

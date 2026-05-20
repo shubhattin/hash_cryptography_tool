@@ -36,8 +36,7 @@ fn copy_to_clipboard(_text: &str) {}
 
 #[component]
 pub fn MaskPasswordToggle(
-    #[prop(default = "Hide passwords")]
-    label: &'static str,
+    #[prop(default = "Hide passwords")] label: &'static str,
 ) -> impl IntoView {
     let hide = use_mask_passwords();
 
@@ -170,8 +169,7 @@ pub fn TextArea(
 #[component]
 pub fn PrimaryButton(
     #[prop(into)] label: String,
-    #[prop(optional)]
-    busy: Option<RwSignal<bool>>,
+    #[prop(optional)] busy: Option<RwSignal<bool>>,
 ) -> impl IntoView {
     view! {
         <button
@@ -185,10 +183,7 @@ pub fn PrimaryButton(
 }
 
 #[component]
-pub fn SecondaryButton(
-    label: &'static str,
-    on_click: Callback<()>,
-) -> impl IntoView {
+pub fn SecondaryButton(label: &'static str, on_click: Callback<()>) -> impl IntoView {
     view! {
         <button
             type="button"
@@ -250,8 +245,7 @@ pub fn ReadonlyOutput(
 #[component]
 pub fn StatusBadge(
     valid: RwSignal<Option<bool>>,
-    #[prop(optional, into)]
-    loading: Option<Signal<bool>>,
+    #[prop(optional, into)] loading: Option<Signal<bool>>,
 ) -> impl IntoView {
     let loading = loading.unwrap_or_else(|| Signal::derive(|| false));
     view! {
