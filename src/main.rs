@@ -30,6 +30,10 @@ async fn main() {
         );
     static_generator.generate(&leptos_options).await;
 
+    if std::env::args().any(|arg| arg == "--ssg-only") {
+        return;
+    }
+
     let app = Router::new()
         .leptos_routes(
             &leptos_options,
