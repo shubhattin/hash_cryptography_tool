@@ -4,24 +4,63 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-crate-type = ["rlib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-leptos = { version = "0.8.0", features = ["ssr"] }
-leptos_meta = { version = "0.8.0", features = ["ssr"] }
-leptos_router = { version = "0.8.0", features = ["ssr"] }
-leptos_axum = { version = "0.8.0" }
-axum = "0.8.0"
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
-tower-http = { version = "0.6", features = ["fs"] }
+leptos = { version = "0.8.0" }
+leptos_meta = { version = "0.8.0" }
+leptos_router = { version = "0.8.0" }
+leptos_axum = { version = "0.8.0", optional = true }
+axum = { version = "0.8.0", optional = true }
+tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+tower-http = { version = "0.6", features = ["fs"], optional = true }
+console_error_panic_hook = { version = "0.1", optional = true }
+wasm-bindgen = { version = "0.2.106", optional = true }
+web-sys = { version = "0.3", optional = true, features = ["Window", "Storage", "Document", "HtmlElement"] }
+
+sha2 = "0.10"
+sha3 = "0.10"
+hex = "0.4"
+rand = "0.9"
+aes-gcm = "0.10"
+base64 = "0.22"
+bcrypt = "0.17"
+argon2 = "0.5"
+scrypt = "0.11"
+subtle = "2.6"
+thiserror = "2"
+uuid = { version = "1", features = ["v4"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom02 = { package = "getrandom", version = "0.2", features = ["js"] }
+getrandom03 = { package = "getrandom", version = "0.3", features = ["wasm_js"] }
+getrandom04 = { package = "getrandom", version = "0.4", features = ["wasm_js"] }
 
 [features]
-default = ["ssr"]
+default = []
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:wasm-bindgen",
+    "dep:web-sys",
+    "uuid/js",
+]
 ssr = [
+    "dep:axum",
+    "dep:tokio",
+    "dep:leptos_axum",
+    "dep:tower-http",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
 ]
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
 
 [package.metadata.leptos]
 output-name = "hash_tool_rs"
@@ -29,4 +68,12 @@ site-root = "target/site"
 site-pkg-dir = "pkg"
 style-file = "style/app.css"
 assets-dir = "public"
+site-addr = "127.0.0.1:3000"
+reload-port = 3001
+env = "DEV"
+bin-features = ["ssr"]
+lib-features = ["hydrate"]
+bin-default-features = false
+lib-default-features = false
+lib-profile-release = "wasm-release"
 watch-additional-files = ["style/tailwind.css", "package.json"]

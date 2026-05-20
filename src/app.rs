@@ -1,51 +1,58 @@
 use leptos::prelude::*;
-use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
+use leptos_meta::{provide_meta_context, Link, Meta, MetaTags, Stylesheet, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
     static_routes::StaticRoute,
-    StaticSegment, SsrMode,
+    SsrMode, StaticSegment,
 };
+
+use crate::components::theme::{provide_theme, ThemeInit, ThemeScript, ThemeSync};
+use crate::pages::{encrypt::EncryptPage, hashes::HashesPage, pass_hash::PassHashPage};
 
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
+    provide_theme();
 
     view! {
-        <html lang="en">
+        <html lang="en" class="dark">
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <MetaTags/>
+                <ThemeScript/>
+                <Meta name="description" content="Hash, encrypt, and password-hash tools in the browser."/>
+                <Link rel="icon" href="/favicon.ico"/>
                 <Stylesheet id="leptos" href="/pkg/hash_tool_rs.css"/>
-                <Title text="Hash Tool"/>
+                <Title text="Hash Cryptography Tool"/>
+                <MetaTags/>
             </head>
-            <body>
+            <body class="min-h-screen bg-background font-sans text-foreground antialiased">
+                <ThemeInit/>
+                <ThemeSync/>
                 <Router>
-                    <main class="min-h-screen bg-slate-950 text-slate-100">
-                        <Routes fallback=|| "Page not found.".into_view()>
-                            <Route
-                                path=StaticSegment("")
-                                view=HomePage
-                                ssr=SsrMode::Static(StaticRoute::new())
-                            />
-                        </Routes>
-                    </main>
+                    <Routes fallback=|| view! {
+                        <div class="flex min-h-screen items-center justify-center">
+                            <p class="text-muted-foreground">"Page not found."</p>
+                        </div>
+                    }>
+                        <Route
+                            path=StaticSegment("")
+                            view=HashesPage
+                            ssr=SsrMode::Static(StaticRoute::new())
+                        />
+                        <Route
+                            path=StaticSegment("pass_hash")
+                            view=PassHashPage
+                            ssr=SsrMode::Static(StaticRoute::new())
+                        />
+                        <Route
+                            path=StaticSegment("encrypt")
+                            view=EncryptPage
+                            ssr=SsrMode::Static(StaticRoute::new())
+                        />
+                    </Routes>
                 </Router>
             </body>
         </html>
-    }
-}
-
-#[component]
-fn HomePage() -> impl IntoView {
-    view! {
-        <div class="mx-auto flex max-w-lg flex-col items-center gap-6 px-6 py-16">
-            <h1 class="text-3xl font-bold tracking-tight text-white">
-                "Hash Tool"
-            </h1>
-            <p class="text-center text-slate-400">
-                "Static site — Leptos SSR + Tailwind CSS (Bun)"
-            </p>
-        </div>
     }
 }
