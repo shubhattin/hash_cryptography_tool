@@ -42,6 +42,17 @@ bun run build
 
 Deploy the contents of `target/site/` to any static host (nginx, GitHub Pages, S3, etc.).
 
+## Preview production build
+
+After building, serve the static output locally:
+
+```bash
+bun run build
+bun run preview
+```
+
+Open http://127.0.0.1:3000
+
 ## Project layout
 
 | Path | Purpose |

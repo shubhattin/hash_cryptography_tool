@@ -6,10 +6,12 @@
     "css:build": "bunx @tailwindcss/cli -i ./style/tailwind.css -o ./style/app.css --minify",
     "css:watch": "bunx @tailwindcss/cli -i ./style/tailwind.css -o ./style/app.css --watch",
     "dev": "bun run css:watch & cargo leptos watch",
-    "build": "bun run css:build && cargo leptos build --release"
+    "build": "bun run css:build && cargo leptos build --release",
+    "preview": "bunx serve target/site -ln 3000"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.8",
+    "serve": "^14.2.4",
     "tailwindcss": "^4.1.8"
   }
 }

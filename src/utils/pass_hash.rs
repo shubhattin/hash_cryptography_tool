@@ -1,4 +1,4 @@
-//! Password hashing: bcrypt, Argon2, and scrypt (normal format only).
+//! Password hashing: bcrypt, Argon2, scrypt (normal `salt_hex:hash_hex`), and Better Auth scrypt.
 
 use argon2::{
     password_hash::{
@@ -11,6 +11,7 @@ use bcrypt::{hash_with_salt, verify, BcryptError, BcryptResult};
 use rand::RngCore;
 use scrypt::{scrypt, Params as ScryptParams};
 use thiserror::Error;
+use unicode_normalization::UnicodeNormalization;
 
 use crate::utils::hash::{bytes_to_hex, hex_to_bytes};
 
@@ -147,6 +148,64 @@ pub fn scrypt_verify(
     Ok(constant_time_eq_str(&computed, expected_hex))
 }
 
+// Better Auth (`@better-auth/utils` password): N=16384, r=16, p=1, dkLen=64; password NFKC;
+// salt passed to scrypt is the UTF-8 bytes of the hex salt string (not decoded bytes).
+
+const BETTER_AUTH_LOG_N: u8 = 14; // N = 16384
+const BETTER_AUTH_R: u32 = 16;
+const BETTER_AUTH_P: u32 = 1;
+const BETTER_AUTH_DK_LEN: usize = 64;
+
+fn better_auth_password_bytes(password: &str) -> Vec<u8> {
+    password.chars().nfkc().collect::<String>().into_bytes()
+}
+
+/// Derive Better Auth scrypt key as lowercase hex (`dkLen` bytes).
+pub fn better_auth_scrypt_derive_hex(
+    password: &str,
+    salt_hex: &str,
+) -> Result<String, PassHashError> {
+    let params = ScryptParams::new(
+        BETTER_AUTH_LOG_N,
+        BETTER_AUTH_R,
+        BETTER_AUTH_P,
+        BETTER_AUTH_DK_LEN,
+    )
+    .map_err(|e| PassHashError::Scrypt(e.to_string()))?;
+
+    let pwd = better_auth_password_bytes(password);
+    let mut output = vec![0u8; BETTER_AUTH_DK_LEN];
+    scrypt(
+        &pwd,
+        salt_hex.as_bytes(),
+        &params,
+        &mut output,
+    )
+    .map_err(|e| PassHashError::Scrypt(e.to_string()))?;
+    Ok(bytes_to_hex(&output))
+}
+
+/// Better Auth-style scrypt: `{salt_hex}:{key_hex}` with fixed parameters and semantics above.
+pub fn better_auth_scrypt_hash(password: &str) -> Result<String, PassHashError> {
+    let mut salt = [0u8; 16];
+    rand::rng().fill_bytes(&mut salt);
+    let salt_hex = bytes_to_hex(&salt);
+    let key_hex = better_auth_scrypt_derive_hex(password, &salt_hex)?;
+    Ok(format!("{salt_hex}:{key_hex}"))
+}
+
+/// Verify a stored Better Auth scrypt string (same format as [`better_auth_scrypt_hash`]).
+pub fn better_auth_scrypt_verify(password: &str, stored: &str) -> Result<bool, PassHashError> {
+    let (salt_hex, expected_hex) = stored
+        .split_once(':')
+        .ok_or(PassHashError::InvalidFormat("better-auth scrypt salt:hash"))?;
+    if salt_hex.is_empty() || expected_hex.is_empty() {
+        return Err(PassHashError::InvalidFormat("better-auth scrypt empty part"));
+    }
+    let computed = better_auth_scrypt_derive_hex(password, salt_hex)?;
+    Ok(constant_time_eq_str(&computed, expected_hex))
+}
+
 fn scrypt_derive_hex(
     password: &str,
     salt: &[u8],
@@ -230,5 +289,26 @@ mod tests {
     fn cost_factor_to_log_n_values() {
         assert_eq!(cost_factor_to_log_n(8), 3);
         assert_eq!(cost_factor_to_log_n(1024), 10u8);
+    }
+
+    #[test]
+    fn better_auth_scrypt_roundtrip() {
+        let stored = better_auth_scrypt_hash("test-password").unwrap();
+        assert!(stored.contains(':'));
+        assert!(better_auth_scrypt_verify("test-password", &stored).unwrap());
+        assert!(!better_auth_scrypt_verify("other", &stored).unwrap());
+    }
+
+    #[test]
+    fn better_auth_scrypt_rejects_bad_format() {
+        assert!(better_auth_scrypt_verify("a", "nocolon").is_err());
+        assert!(better_auth_scrypt_verify("a", ":").is_err());
+    }
+
+    #[test]
+    fn better_auth_scrypt_nfkc_equiv_password_verify() {
+        // Fullwidth Latin letters NFKC-normalize to ASCII (matches JS `password.normalize("NFKC")`).
+        let stored = better_auth_scrypt_hash("ｔｅｓｔ").unwrap();
+        assert!(better_auth_scrypt_verify("test", &stored).unwrap());
     }
 }

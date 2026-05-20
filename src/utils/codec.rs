@@ -24,8 +24,26 @@ pub fn decode_base64(text: &str) -> Result<String, CodecError> {
     String::from_utf8(bytes).map_err(|_| CodecError::InvalidUtf8)
 }
 
-pub fn generate_uuid() -> String {
+pub fn generate_uuid_v4() -> String {
     Uuid::new_v4().to_string()
+}
+
+fn random_node_id() -> [u8; 6] {
+    let mut node_id = [0u8; 6];
+    rand::rng().fill_bytes(&mut node_id);
+    // RFC 9562: set least significant bit of first octet to avoid MAC conflicts.
+    node_id[0] |= 0x01;
+    node_id
+}
+
+/// UUID v6 — time-ordered, lexicographically sortable (RFC 9562).
+pub fn generate_uuid_v6() -> String {
+    Uuid::now_v6(&random_node_id()).to_string()
+}
+
+/// Alias for [`generate_uuid_v4`].
+pub fn generate_uuid() -> String {
+    generate_uuid_v4()
 }
 
 pub fn generate_alphanumeric(length: usize) -> String {
@@ -50,10 +68,21 @@ mod tests {
     }
 
     #[test]
-    fn uuid_format() {
-        let id = generate_uuid();
+    fn uuid_v4_format() {
+        let id = generate_uuid_v4();
         assert_eq!(id.len(), 36);
         assert!(id.contains('-'));
+        assert_eq!(Uuid::parse_str(&id).unwrap().get_version(), Some(uuid::Version::Random));
+    }
+
+    #[test]
+    fn uuid_v6_format() {
+        let id = generate_uuid_v6();
+        assert_eq!(id.len(), 36);
+        assert_eq!(
+            Uuid::parse_str(&id).unwrap().get_version(),
+            Some(uuid::Version::SortMac)
+        );
     }
 
     #[test]

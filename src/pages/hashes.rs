@@ -3,11 +3,11 @@ use leptos::prelude::*;
 use crate::components::{
     layout::AppLayout,
     ui::{
-        FieldLabel, OutputField, PrimaryButton, RadioGroup, TextArea, ToolSection,
+        FieldLabel, OutputField, PrimaryButton, RadioGroup, ReadonlyOutput, TextArea, ToolSection,
     },
 };
 use crate::utils::{
-    codec::{decode_base64, encode_base64, generate_alphanumeric, generate_uuid},
+    codec::{decode_base64, encode_base64, generate_alphanumeric, generate_uuid_v4, generate_uuid_v6},
     hash::{self, DigestAlgorithm},
 };
 
@@ -175,7 +175,7 @@ fn SaltSection() -> impl IntoView {
                     "Generate salt"
                 </button>
                 <FieldLabel label="Salt">
-                    <TextArea value=salt rows=2 readonly=true />
+                    <ReadonlyOutput value=salt rows=2 />
                 </FieldLabel>
             </div>
         </ToolSection>
@@ -187,17 +187,29 @@ fn UuidSection() -> impl IntoView {
     let uuid = RwSignal::new(String::new());
 
     view! {
-        <ToolSection title="UUID v4">
+        <ToolSection
+            title="UUID"
+            hint="v4: random. v6: time-ordered and sortable by creation time (RFC 9562)."
+        >
             <div class="space-y-4">
-                <button
-                    type="button"
-                    class="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
-                    on:click=move |_| uuid.set(generate_uuid())
-                >
-                    "Generate UUID"
-                </button>
+                <div class="flex flex-wrap gap-2">
+                    <button
+                        type="button"
+                        class="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                        on:click=move |_| uuid.set(generate_uuid_v4())
+                    >
+                        "Generate v4"
+                    </button>
+                    <button
+                        type="button"
+                        class="rounded-lg border border-border bg-muted px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-background"
+                        on:click=move |_| uuid.set(generate_uuid_v6())
+                    >
+                        "Generate v6"
+                    </button>
+                </div>
                 <FieldLabel label="UUID">
-                    <TextArea value=uuid rows=1 readonly=true />
+                    <ReadonlyOutput value=uuid rows=1 />
                 </FieldLabel>
             </div>
         </ToolSection>
@@ -234,7 +246,7 @@ fn AlphanumericSection() -> impl IntoView {
                     "Generate code"
                 </button>
                 <FieldLabel label="Result">
-                    <TextArea value=code rows=2 readonly=true />
+                    <ReadonlyOutput value=code rows=2 />
                 </FieldLabel>
             </div>
         </ToolSection>

@@ -1,5 +1,50 @@
 use leptos::prelude::*;
 
+/// Page-level toggle: when true, maskable fields render as password / obscured text.
+#[derive(Clone, Copy)]
+pub struct MaskPasswords(pub RwSignal<bool>);
+
+pub fn provide_mask_passwords() -> RwSignal<bool> {
+    let hide = RwSignal::new(false);
+    provide_context(MaskPasswords(hide));
+    hide
+}
+
+fn use_mask_passwords() -> RwSignal<bool> {
+    expect_context::<MaskPasswords>().0
+}
+
+#[cfg(feature = "hydrate")]
+fn copy_to_clipboard(text: &str) {
+    if let Some(window) = web_sys::window() {
+        let clipboard = window.navigator().clipboard();
+        let _ = clipboard.write_text(text);
+    }
+}
+
+#[cfg(not(feature = "hydrate"))]
+fn copy_to_clipboard(_text: &str) {}
+
+#[component]
+pub fn MaskPasswordToggle(
+    #[prop(default = "Hide passwords")]
+    label: &'static str,
+) -> impl IntoView {
+    let hide = use_mask_passwords();
+
+    view! {
+        <label class="mb-6 flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm text-foreground">
+            <input
+                type="checkbox"
+                class="accent-primary"
+                prop:checked=move || hide.get()
+                on:change=move |ev| hide.set(event_target_checked(&ev))
+            />
+            <span>{label}</span>
+        </label>
+    }
+}
+
 #[component]
 pub fn PageTitle(title: &'static str, subtitle: Option<&'static str>) -> impl IntoView {
     view! {
@@ -38,11 +83,25 @@ pub fn ToolSection(
 pub fn FieldLabel(
     label: &'static str,
     #[prop(optional)] hint: Option<&'static str>,
+    #[prop(optional, into)]
+    disabled: Option<Signal<bool>>,
     children: Children,
 ) -> impl IntoView {
     view! {
-        <label class="mb-4 block last:mb-0">
-            <span class="mb-1.5 block text-sm font-medium text-foreground">{label}</span>
+        <label class=move || {
+            if disabled.as_ref().is_some_and(|s| s.get()) {
+                "mb-4 block last:mb-0 opacity-80"
+            } else {
+                "mb-4 block last:mb-0"
+            }
+        }>
+            <span class=move || {
+                if disabled.as_ref().is_some_and(|s| s.get()) {
+                    "mb-1.5 block text-sm font-medium text-muted-foreground"
+                } else {
+                    "mb-1.5 block text-sm font-medium text-foreground"
+                }
+            }>{label}</span>
             {hint.map(|h| view! {
                 <span class="mb-2 block text-xs text-muted-foreground">{h}</span>
             })}
@@ -55,9 +114,17 @@ pub fn FieldLabel(
 pub fn TextInput(
     #[prop(into)] value: RwSignal<String>,
     #[prop(optional, into)] placeholder: Option<String>,
-    #[prop(default = false)] password: bool,
+    #[prop(default = false)] maskable: bool,
 ) -> impl IntoView {
-    let input_type = if password { "password" } else { "text" };
+    let hide = maskable.then(use_mask_passwords);
+    let input_type = move || {
+        if hide.is_some_and(|h| h.get()) {
+            "password"
+        } else {
+            "text"
+        }
+    };
+
     view! {
         <input
             type=input_type
@@ -75,17 +142,30 @@ pub fn TextArea(
     #[prop(default = 4)] rows: u32,
     #[prop(optional, into)] placeholder: Option<String>,
     #[prop(default = false)] readonly: bool,
+    #[prop(default = false)] maskable: bool,
 ) -> impl IntoView {
+    let hide = maskable.then(use_mask_passwords);
+    let extra_class = move || {
+        if hide.is_some_and(|h| h.get()) {
+            " [text-security:disc] [-webkit-text-security:disc]"
+        } else {
+            ""
+        }
+    };
+
     view! {
         <textarea
-            class="w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 font-mono text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30 disabled:opacity-80"
+            class=move || format!(
+                "w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 font-mono text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30 disabled:opacity-80{}",
+                extra_class()
+            )
             rows=rows
             placeholder=placeholder.unwrap_or_default()
             readonly=readonly
             prop:value=move || value.get()
             on:input=move |ev| {
                 if !readonly {
-                    value.set(event_target_value(&ev))
+                    value.set(event_target_value(&ev));
                 }
             }
         />
@@ -126,14 +206,48 @@ pub fn SecondaryButton(
 }
 
 #[component]
+pub fn OutputToolbar(
+    #[prop(into)] get_text: Signal<String>,
+    #[prop(default = true)] show_clear: bool,
+    #[prop(optional)] on_clear: Option<Callback<()>>,
+) -> impl IntoView {
+    let on_copy = Callback::new(move |_: ()| copy_to_clipboard(&get_text.get()));
+    let on_clear = on_clear.unwrap_or(Callback::new(|_: ()| {}));
+
+    view! {
+        <div class="flex justify-end gap-2">
+            <SecondaryButton label="Copy" on_click=on_copy />
+            {show_clear.then(|| view! {
+                <SecondaryButton label="Clear" on_click=on_clear />
+            })}
+        </div>
+    }
+}
+
+#[component]
 pub fn OutputField(#[prop(into)] value: RwSignal<String>) -> impl IntoView {
     let clear = Callback::new(move |_: ()| value.set(String::new()));
+    let text = Signal::derive(move || value.get());
+
     view! {
         <div class="space-y-2">
-            <div class="flex justify-end">
-                <SecondaryButton label="Clear" on_click=clear />
-            </div>
+            <OutputToolbar get_text=text on_clear=clear />
             <TextArea value rows=4 readonly=true />
+        </div>
+    }
+}
+
+#[component]
+pub fn ReadonlyOutput(
+    #[prop(into)] value: RwSignal<String>,
+    #[prop(default = 2)] rows: u32,
+) -> impl IntoView {
+    let text = Signal::derive(move || value.get());
+
+    view! {
+        <div class="space-y-2">
+            <OutputToolbar get_text=text show_clear=false />
+            <TextArea value rows readonly=true />
         </div>
     }
 }

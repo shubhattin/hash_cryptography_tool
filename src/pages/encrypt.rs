@@ -2,7 +2,10 @@ use leptos::prelude::*;
 
 use crate::components::{
     layout::AppLayout,
-    ui::{FieldLabel, OutputField, PrimaryButton, RadioGroup, TextArea, TextInput, ToolSection},
+    ui::{
+        provide_mask_passwords, FieldLabel, MaskPasswordToggle, OutputField, PrimaryButton,
+        RadioGroup, TextArea, TextInput, ToolSection,
+    },
 };
 use crate::utils::encrypt::{decrypt_text, encrypt_text};
 
@@ -15,6 +18,7 @@ enum EncMode {
 
 #[component]
 pub fn EncryptPage() -> impl IntoView {
+    provide_mask_passwords();
     let mode = RwSignal::new(EncMode::Encrypt);
     let text = RwSignal::new(String::new());
     let key = RwSignal::new(String::new());
@@ -47,6 +51,7 @@ pub fn EncryptPage() -> impl IntoView {
             title="Encrypt / Decrypt"
             subtitle=Some("AES-256-GCM with a key derived via SHA-256 from your passphrase. Format: nonce-ciphertext (base64).")
         >
+            <MaskPasswordToggle label="Hide passphrase" />
             <ToolSection title="AES-256-GCM">
                 <form class="space-y-4" on:submit=on_submit>
                     <FieldLabel label="Mode">
@@ -63,7 +68,7 @@ pub fn EncryptPage() -> impl IntoView {
                         <TextArea value=text rows=5 placeholder="Plaintext or encrypted payload…".to_string() />
                     </FieldLabel>
                     <FieldLabel label="Passphrase">
-                        <TextInput value=key password=true placeholder="Secret key…".to_string() />
+                        <TextInput value=key maskable=true placeholder="Secret key…".to_string() />
                     </FieldLabel>
                     <PrimaryButton label="Run".to_string() />
                     {move || {

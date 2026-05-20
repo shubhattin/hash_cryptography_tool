@@ -16,7 +16,7 @@ tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 tower-http = { version = "0.6", features = ["fs"], optional = true }
 console_error_panic_hook = { version = "0.1", optional = true }
 wasm-bindgen = { version = "0.2.106", optional = true }
-web-sys = { version = "0.3", optional = true, features = ["Window", "Storage", "Document", "HtmlElement"] }
+web-sys = { version = "0.3", optional = true, features = ["Window", "Storage", "Document", "HtmlElement", "Navigator", "Clipboard"] }
 
 sha2 = "0.10"
 sha3 = "0.10"
@@ -29,7 +29,8 @@ argon2 = "0.5"
 scrypt = "0.11"
 subtle = "2.6"
 thiserror = "2"
-uuid = { version = "1", features = ["v4"] }
+unicode-normalization = "0.1"
+uuid = { version = "1", features = ["v4", "v6", "std", "rng"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom02 = { package = "getrandom", version = "0.2", features = ["js"] }

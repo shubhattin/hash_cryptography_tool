@@ -3,8 +3,8 @@ use leptos::prelude::*;
 use crate::components::{
     layout::AppLayout,
     ui::{
-        FieldLabel, OutputField, PrimaryButton, RadioGroup, StatusBadge, TextArea, TextInput,
-        ToolSection,
+        provide_mask_passwords, FieldLabel, MaskPasswordToggle, OutputField, PrimaryButton,
+        RadioGroup, StatusBadge, TextArea, TextInput, ToolSection,
     },
 };
 use crate::utils::{
@@ -16,11 +16,14 @@ use crate::utils::{
 
 #[component]
 pub fn PassHashPage() -> impl IntoView {
+    provide_mask_passwords();
+
     view! {
         <AppLayout
             title="Password Hashing"
             subtitle=Some("Salted digests, bcrypt, Argon2, and scrypt — computed in the browser.")
         >
+            <MaskPasswordToggle />
             <SaltedShaSection />
             <SaltedShaVerifySection />
             <BcryptHashSection />
@@ -95,7 +98,7 @@ fn SaltedShaSection() -> impl IntoView {
                     />
                 </FieldLabel>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <PrimaryButton label="Hash".to_string() />
                 <FieldLabel label="Hash + salt">
@@ -145,7 +148,7 @@ fn SaltedShaVerifySection() -> impl IntoView {
                     />
                 </FieldLabel>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <FieldLabel label="Stored hash">
                     <TextArea value=stored rows=3 />
@@ -202,7 +205,7 @@ fn BcryptHashSection() -> impl IntoView {
                     </span>
                 </FieldLabel>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <PrimaryButton label="Hash".to_string() busy=busy />
                 <FieldLabel label="Bcrypt hash">
@@ -246,7 +249,7 @@ fn BcryptVerifySection() -> impl IntoView {
         <ToolSection title="Bcrypt verify">
             <form class="space-y-4" on:submit=on_submit>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <FieldLabel label="Bcrypt hash (60 chars)">
                     <TextArea value=stored rows=2 />
@@ -318,20 +321,20 @@ fn ArgonHashSection() -> impl IntoView {
                 </FieldLabel>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <FieldLabel label="Parallelism">
-                        <NumberInput value=parallelism min=1 max=16 />
+                        <NumberInput value=parallelism min=1 max=16 disabled=Signal::derive(|| false) />
                     </FieldLabel>
                     <FieldLabel label="Iterations">
-                        <NumberInput value=iterations min=1 max=65536 />
+                        <NumberInput value=iterations min=1 max=65536 disabled=Signal::derive(|| false) />
                     </FieldLabel>
                     <FieldLabel label="Memory (KiB)">
-                        <NumberInput value=memory min=8 max=1048576 />
+                        <NumberInput value=memory min=8 max=1048576 disabled=Signal::derive(|| false) />
                     </FieldLabel>
                     <FieldLabel label="Hash length (bytes)">
-                        <NumberInput value=hash_len min=16 max=64 />
+                        <NumberInput value=hash_len min=16 max=64 disabled=Signal::derive(|| false) />
                     </FieldLabel>
                 </div>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <PrimaryButton label="Hash".to_string() busy=busy />
                 <FieldLabel label="PHC hash">
@@ -372,7 +375,7 @@ fn ArgonVerifySection() -> impl IntoView {
         <ToolSection title="Argon2 verify">
             <form class="space-y-4" on:submit=on_submit>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <FieldLabel label="PHC hash">
                     <TextArea value=stored rows=3 />
@@ -393,6 +396,8 @@ fn ScryptHashSection() -> impl IntoView {
     let parallel = RwSignal::new(1u32);
     let len = RwSignal::new(64u32);
     let busy = RwSignal::new(false);
+    let better_auth = RwSignal::new(false);
+    let params_disabled = Signal::derive(move || better_auth.get());
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         ev.prevent_default();
@@ -407,10 +412,15 @@ fn ScryptHashSection() -> impl IntoView {
             parallelism: parallel.get(),
             hash_length: len.get() as usize,
         };
+        let use_better_auth = better_auth.get();
         let output = output;
         let busy = busy;
         leptos::task::spawn_local(async move {
-            let result = pass_hash::scrypt_hash(&pwd, cfg).unwrap_or_default();
+            let result = if use_better_auth {
+                pass_hash::better_auth_scrypt_hash(&pwd).unwrap_or_default()
+            } else {
+                pass_hash::scrypt_hash(&pwd, cfg).unwrap_or_default()
+            };
             output.set(result);
             busy.set(false);
         });
@@ -419,22 +429,42 @@ fn ScryptHashSection() -> impl IntoView {
     view! {
         <ToolSection title="Scrypt hash" hint="Format: salt_hex:hash_hex">
             <form class="space-y-4" on:submit=on_submit>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <FieldLabel label="Cost factor (N)">
-                        <ScryptCostSelect value=cost />
+                <label class="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                    <input
+                        type="checkbox"
+                        class="accent-primary"
+                        prop:checked=move || better_auth.get()
+                        on:change=move |ev| better_auth.set(event_target_checked(&ev))
+                    />
+                    <span>"Better Auth hash"</span>
+                </label>
+                <Show when=move || better_auth.get()>
+                    <p class="text-xs text-muted-foreground">
+                        "Better Auth: NFKC password, salt as hex string, N=16384 r=16 p=1 dkLen=64"
+                    </p>
+                </Show>
+                <div class=move || {
+                    if params_disabled.get() {
+                        "grid gap-4 rounded-lg border border-dashed border-muted bg-muted/30 p-4 sm:grid-cols-2 transition-colors"
+                    } else {
+                        "grid gap-4 sm:grid-cols-2"
+                    }
+                }>
+                    <FieldLabel label="Cost factor (N)" disabled=params_disabled>
+                        <ScryptCostSelect value=cost disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Block size (r)">
-                        <NumberInput value=block min=1 max=32 />
+                    <FieldLabel label="Block size (r)" disabled=params_disabled>
+                        <NumberInput value=block min=1 max=32 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Parallelism (p)">
-                        <NumberInput value=parallel min=1 max=16 />
+                    <FieldLabel label="Parallelism (p)" disabled=params_disabled>
+                        <NumberInput value=parallel min=1 max=16 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Hash length">
-                        <NumberInput value=len min=8 max=512 />
+                    <FieldLabel label="Hash length" disabled=params_disabled>
+                        <NumberInput value=len min=8 max=512 disabled=params_disabled />
                     </FieldLabel>
                 </div>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <PrimaryButton label="Hash".to_string() busy=busy />
                 <FieldLabel label="Scrypt hash">
@@ -455,6 +485,8 @@ fn ScryptVerifySection() -> impl IntoView {
     let len = RwSignal::new(64u32);
     let status = RwSignal::new(None::<bool>);
     let busy = RwSignal::new(false);
+    let better_auth = RwSignal::new(false);
+    let params_disabled = Signal::derive(move || better_auth.get());
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         ev.prevent_default();
@@ -471,10 +503,15 @@ fn ScryptVerifySection() -> impl IntoView {
             parallelism: parallel.get(),
             hash_length: len.get() as usize,
         };
+        let use_better_auth = better_auth.get();
         let status = status;
         let busy = busy;
         leptos::task::spawn_local(async move {
-            let ok = pass_hash::scrypt_verify(&pwd, &hash, cfg).unwrap_or(false);
+            let ok = if use_better_auth {
+                pass_hash::better_auth_scrypt_verify(&pwd, &hash).unwrap_or(false)
+            } else {
+                pass_hash::scrypt_verify(&pwd, &hash, cfg).unwrap_or(false)
+            };
             status.set(Some(ok));
             busy.set(false);
         });
@@ -483,22 +520,42 @@ fn ScryptVerifySection() -> impl IntoView {
     view! {
         <ToolSection title="Scrypt verify">
             <form class="space-y-4" on:submit=on_submit>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <FieldLabel label="Cost factor (N)">
-                        <ScryptCostSelect value=cost />
+                <label class="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                    <input
+                        type="checkbox"
+                        class="accent-primary"
+                        prop:checked=move || better_auth.get()
+                        on:change=move |ev| better_auth.set(event_target_checked(&ev))
+                    />
+                    <span>"Better Auth hash"</span>
+                </label>
+                <Show when=move || better_auth.get()>
+                    <p class="text-xs text-muted-foreground">
+                        "Better Auth: NFKC password, salt as hex string, N=16384 r=16 p=1 dkLen=64"
+                    </p>
+                </Show>
+                <div class=move || {
+                    if params_disabled.get() {
+                        "grid gap-4 rounded-lg border border-dashed border-muted bg-muted/30 p-4 sm:grid-cols-2 transition-colors"
+                    } else {
+                        "grid gap-4 sm:grid-cols-2"
+                    }
+                }>
+                    <FieldLabel label="Cost factor (N)" disabled=params_disabled>
+                        <ScryptCostSelect value=cost disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Block size (r)">
-                        <NumberInput value=block min=1 max=32 />
+                    <FieldLabel label="Block size (r)" disabled=params_disabled>
+                        <NumberInput value=block min=1 max=32 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Parallelism (p)">
-                        <NumberInput value=parallel min=1 max=16 />
+                    <FieldLabel label="Parallelism (p)" disabled=params_disabled>
+                        <NumberInput value=parallel min=1 max=16 disabled=params_disabled />
                     </FieldLabel>
-                    <FieldLabel label="Hash length">
-                        <NumberInput value=len min=8 max=512 />
+                    <FieldLabel label="Hash length" disabled=params_disabled>
+                        <NumberInput value=len min=8 max=512 disabled=params_disabled />
                     </FieldLabel>
                 </div>
                 <FieldLabel label="Password">
-                    <TextInput value=text password=true />
+                    <TextInput value=text maskable=true />
                 </FieldLabel>
                 <FieldLabel label="Stored hash">
                     <TextArea value=stored rows=3 />
@@ -510,19 +567,26 @@ fn ScryptVerifySection() -> impl IntoView {
     }
 }
 
+const FORM_CONTROL_DISABLED: &str = "transition disabled:cursor-not-allowed disabled:border-muted disabled:bg-muted/50 disabled:text-muted-foreground disabled:opacity-70 disabled:shadow-none";
+
 #[component]
 fn NumberInput(
     value: RwSignal<u32>,
     min: u32,
     max: u32,
+    #[prop(into)]
+    disabled: Signal<bool>,
 ) -> impl IntoView {
     view! {
         <input
             type="number"
             min=min
             max=max
-            class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+            class=format!(
+                "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm {FORM_CONTROL_DISABLED}"
+            )
             prop:value=move || value.get()
+            prop:disabled=move || disabled.get()
             on:input=move |ev| {
                 if let Ok(n) = event_target_value(&ev).parse::<u32>() {
                     value.set(n.clamp(min, max));
@@ -533,11 +597,18 @@ fn NumberInput(
 }
 
 #[component]
-fn ScryptCostSelect(value: RwSignal<u32>) -> impl IntoView {
+fn ScryptCostSelect(
+    value: RwSignal<u32>,
+    #[prop(into)]
+    disabled: Signal<bool>,
+) -> impl IntoView {
     let costs: Vec<u32> = (2..=16).map(|i| 2u32.pow(i)).collect();
     view! {
         <select
-            class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+            class=format!(
+                "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm {FORM_CONTROL_DISABLED}"
+            )
+            prop:disabled=move || disabled.get()
             on:change=move |ev| {
                 if let Ok(n) = event_target_value(&ev).parse() {
                     value.set(n);
