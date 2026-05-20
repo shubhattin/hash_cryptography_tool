@@ -44,6 +44,11 @@ jobs:
         with:
           tool: cargo-leptos@0.2
 
+      - name: Install wasm-bindgen-cli
+        uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@0.2.121
+
       - name: Build static site
         run: bun run build
 
