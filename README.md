@@ -1,68 +1,40 @@
-# Hash Tool (Leptos static site)
+# Hash Cryptography Tool
 
-Rust [Leptos](https://leptos.dev/) app pre-rendered to static HTML (no WASM, no client-side router / SPA). Styled with [Tailwind CSS v4](https://tailwindcss.com/) via [Bun](https://bun.sh/).
+Browser-side hashing, encryption, and password tools. Live: [hash.shubhattin.in](https://hash.shubhattin.in)
 
-## Prerequisites
+**Stack:** [Leptos](https://leptos.dev/) · [Tailwind CSS v4](https://tailwindcss.com/) · [Bun](https://bun.sh/) · Rust
 
-Optional for `bun run dev` file watching:
+All crypto runs in the browser — nothing is sent to a server. UTF-8 supported throughout.
 
-```bash
-cargo install cargo-watch
-```
+## Features
 
-## Setup
+**Hashes** (`/`)
+- SHA-256, SHA-512, SHA3-256, SHA3-512 digests
+- Base64 encode / decode
+- Random salt (16 bytes, hex)
+- UUID v4 and v6 generators
+- Random alphanumeric codes
 
-```bash
-bun install
-bun run css:build
-```
+**Password hashing** (`/pass_hash`)
+- Salted SHA-256 / SHA-512 / SHA3-256 / SHA3-512 (hash + verify)
+- Bcrypt (hash + verify)
+- Argon2id / Argon2d / Argon2i (hash + verify)
+- Scrypt (hash + verify), including **Better Auth** preset
 
-## Development
+**Encrypt / decrypt** (`/encrypt`)
+- AES-256-GCM with passphrase (SHA-256 key derivation)
 
-Regenerates HTML on change and serves `target/site`:
-
-```bash
-bun run dev
-```
-
-Or manually:
-
-```bash
-bun run css:watch
-cargo run -- --serve
-```
-
-Open http://127.0.0.1:3000
-
-## Production build
+## Commands
 
 ```bash
-bun run build
+bun install          # setup
+bun run dev            # watch + rebuild → target/site
+bun run build          # production build
+bun run preview        # serve target/site at :3000
+cargo test             # Rust tests
 ```
 
-Deploy the contents of `target/site/` to any static host (nginx, GitHub Pages, S3, etc.).
+## History
 
-## Preview production build
-
-After building, serve the static output locally:
-
-```bash
-bun run build
-bun run preview
-```
-
-Open http://127.0.0.1:3000
-
-## Project layout
-
-| Path | Purpose |
-|------|---------|
-| `src/app.rs` | Pages and static route definitions |
-| `src/main.rs` | Prerender (`generate_route_list_with_ssg`) and optional `--serve` |
-| `style/tailwind.css` | Tailwind entry |
-| `style/app.css` | Generated CSS (run `bun run css:build`) |
-| `target/site/` | Built static site output |
-
-## Adding routes
-
-Add a `Route` with `ssr=SsrMode::Static(StaticRoute::new())` and a trailing slash in the path when you want `route/index.html` folders (e.g. `StaticSegment("pass_hash")` → `/pass_hash/index.html`).
+- [SvelteKit](https://kit.svelte.dev/) + [PicoCSS](https://picocss.com/) until [this commit](https://github.com/shubhattin/hash_cryptography_tool/tree/8aab7cf9615c2189a3b8268c069280da9b49dc85)
+- [FastAPI](https://fastapi.tiangolo.com/) + [htmx](https://htmx.org/) + PicoCSS until [this commit](https://github.com/shubhattin/hash_cryptography_tool/tree/694834ecd6fd9f0a283d8f4992a6e57b345953da)
