@@ -1,0 +1,32 @@
+[package]
+name = "hash_tool_rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+leptos = { version = "0.8.0", features = ["ssr"] }
+leptos_meta = { version = "0.8.0", features = ["ssr"] }
+leptos_router = { version = "0.8.0", features = ["ssr"] }
+leptos_axum = { version = "0.8.0" }
+axum = "0.8.0"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tower-http = { version = "0.6", features = ["fs"] }
+
+[features]
+default = ["ssr"]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+]
+
+[package.metadata.leptos]
+output-name = "hash_tool_rs"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+style-file = "style/app.css"
+assets-dir = "public"
+watch-additional-files = ["style/tailwind.css", "package.json"]

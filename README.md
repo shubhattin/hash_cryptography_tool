@@ -1,14 +1,57 @@
-### Simple Cryptography Tool
+# Hash Tool (Leptos static site)
 
-**Online Tool :-** **_[hash.shubhattin.in](https://hash.shubhattin.in)_**
+Rust [Leptos](https://leptos.dev/) app pre-rendered to static HTML (no WASM, no client-side router / SPA). Styled with [Tailwind CSS v4](https://tailwindcss.com/) via [Bun](https://bun.sh/).
 
-- Hash :- SHA3-256, SHA3-512, SHA-256, SHA-512
-- Encrypt/Decrypt
-- Base64 Encode/Decode
-- Password hash using SHA3-256, SHA3-512, SHA-256, SHA-512
-- Password hash verifier for SHA3-256, SHA3-512, SHA-256, SHA-512
-- Salt Generator
+## Prerequisites
 
-> This also supports UTF-8(Unicode character) for all operations
+Optional for `bun run dev` file watching:
 
-This was made using [FastAPI (Python)](https://fastapi.tiangolo.com/), [htmx](https://htmx.org/) and [PicoCSS](https://picocss.com/) till [this commit](https://github.com/shubhattin/hash_cryptography_tool/tree/694834ecd6fd9f0a283d8f4992a6e57b345953da)
+```bash
+cargo install cargo-watch
+```
+
+## Setup
+
+```bash
+bun install
+bun run css:build
+```
+
+## Development
+
+Regenerates HTML on change and serves `target/site`:
+
+```bash
+bun run dev
+```
+
+Or manually:
+
+```bash
+bun run css:watch
+cargo run -- --serve
+```
+
+Open http://127.0.0.1:3000
+
+## Production build
+
+```bash
+bun run build
+```
+
+Deploy the contents of `target/site/` to any static host (nginx, GitHub Pages, S3, etc.).
+
+## Project layout
+
+| Path | Purpose |
+|------|---------|
+| `src/app.rs` | Pages and static route definitions |
+| `src/main.rs` | Prerender (`generate_route_list_with_ssg`) and optional `--serve` |
+| `style/tailwind.css` | Tailwind entry |
+| `style/app.css` | Generated CSS (run `bun run css:build`) |
+| `target/site/` | Built static site output |
+
+## Adding routes
+
+Add a `Route` with `ssr=SsrMode::Static(StaticRoute::new())` and a trailing slash in the path when you want `route/index.html` folders (e.g. `StaticSegment("pass_hash")` → `/pass_hash/index.html`).

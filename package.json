@@ -1,35 +1,15 @@
 {
-  "name": "hash",
-  "version": "0.0.1",
+  "name": "hash_tool_rs",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "prettier --check .",
-    "format": "prettier --write ."
+    "css:build": "bunx @tailwindcss/cli -i ./style/tailwind.css -o ./style/app.css --minify",
+    "css:watch": "bunx @tailwindcss/cli -i ./style/tailwind.css -o ./style/app.css --watch",
+    "dev": "bun run css:watch & cargo watch -x 'run -- --serve'",
+    "build": "bun run css:build && cargo run --release"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.6",
-    "@sveltejs/kit": "^2.13.0",
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "@types/node": "^22.10.2",
-    "prettier": "^3.4.2",
-    "prettier-plugin-svelte": "^3.3.2",
-    "svelte": "^5.14.5",
-    "svelte-check": "^4.1.1",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.4"
-  },
-  "type": "module",
-  "dependencies": {
-    "@better-auth/utils": "^0.2.3",
-    "@fontsource/roboto": "^5.1.0",
-    "@noble/hashes": "^1.7.1",
-    "@picocss/pico": "^2.0.6",
-    "buffer": "^6.0.3",
-    "hash-wasm": "^4.12.0"
+    "@tailwindcss/cli": "^4.1.8",
+    "tailwindcss": "^4.1.8"
   }
 }
